@@ -143,7 +143,7 @@ serve(async (req) => {
     if (userMood && MOOD_RESPONSES[userMood]) {
       const moodInfo = MOOD_RESPONSES[userMood];
       moodContext = `USER'S CURRENT MOOD LEVEL: ${userMood}/5 (${['Very Sad', 'Sad', 'Neutral', 'Good', 'Very Good'][userMood-1]})
-RECOMMENDED APPROACH: ${moodInfo.appach}
+RECOMMENDED APPROACH: ${moodInfo.approach}
 SUGGESTED TECHNIQUES: ${moodInfo.techniques.join(', ')}`;
     }
 
