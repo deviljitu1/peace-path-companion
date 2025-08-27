@@ -2,8 +2,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { MessageCircle, Send, ArrowLeft } from "lucide-react";
+import { MessageCircle, Send, ArrowLeft, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface Message {
   id: string;
@@ -22,9 +24,11 @@ const Chat = () => {
     }
   ]);
   const [newMessage, setNewMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
-  const handleSendMessage = () => {
-    if (!newMessage.trim()) return;
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || isLoading) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -34,19 +38,67 @@ const Chat = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    setNewMessage("");
+    setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      // Prepare chat history for AI context
+      const chatHistory = messages.map(msg => ({
+        content: msg.content,
+        isUser: msg.isUser
+      }));
+
+      const { data, error } = await supabase.functions.invoke('chat-with-ai', {
+        body: {
+          message: newMessage,
+          chatHistory: chatHistory
+        }
+      });
+
+      if (error) {
+        console.error('Error calling AI function:', error);
+        throw new Error(error.message || 'Failed to get AI response');
+      }
+
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
-        content: "Thank you for sharing that with me. Your feelings are completely valid. Would you like to try a brief breathing exercise together, or would you prefer to talk more about what's on your mind?",
+        content: data.response || "I'm here to support you. Could you tell me more about how you're feeling?",
         isUser: false,
         timestamp: new Date()
       };
-      setMessages(prev => [...prev, aiResponse]);
-    }, 1000);
 
-    setNewMessage("");
+      setMessages(prev => [...prev, aiResponse]);
+
+      // Show crisis alert if detected
+      if (data.crisisDetected) {
+        toast({
+          title: "Crisis Support Available",
+          description: "I've detected you may be in distress. Please know that help is available 24/7.",
+          variant: "destructive"
+        });
+      }
+
+    } catch (error) {
+      console.error('Error getting AI response:', error);
+      
+      // Fallback response
+      const fallbackResponse: Message = {
+        id: (Date.now() + 1).toString(),
+        content: "I'm sorry, I'm having trouble connecting right now. Please know that I'm here for you, and if this is urgent, you can call 988 for immediate support. Would you like to try again?",
+        isUser: false,
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, fallbackResponse]);
+      
+      toast({
+        title: "Connection Issue",
+        description: "Having trouble connecting to AI. Crisis support is still available.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -83,10 +135,22 @@ const Chat = () => {
                       : 'bg-accent text-accent-foreground'
                   }`}
                 >
-                  <p className="text-sm">{message.content}</p>
+                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                 </div>
               </div>
             ))}
+            
+            {/* Loading indicator */}
+            {isLoading && (
+              <div className="flex justify-start">
+                <div className="max-w-xs px-4 py-3 rounded-2xl bg-accent text-accent-foreground">
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span className="text-sm">CalmMind is typing...</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="p-4 border-t border-border/50">
@@ -95,11 +159,20 @@ const Chat = () => {
                 placeholder="Share what's on your mind..."
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
                 className="flex-1 bg-white/50 border-primary/20 focus:border-primary"
+                disabled={isLoading}
               />
-              <Button onClick={handleSendMessage} className="bg-gradient-calm hover:shadow-glow">
-                <Send className="h-4 w-4" />
+              <Button 
+                onClick={handleSendMessage} 
+                className="bg-gradient-calm hover:shadow-glow"
+                disabled={isLoading || !newMessage.trim()}
+              >
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
               </Button>
             </div>
           </div>
