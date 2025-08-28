@@ -136,31 +136,31 @@ const MoodTracking = () => {
 
   return (
     <div className="min-h-screen bg-gradient-peaceful">
-      <div className="container mx-auto px-4 py-6 max-w-4xl">
-        <div className="flex items-center gap-4 mb-6">
+      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6 max-w-4xl">
+        <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
           <Link to="/">
-            <Button variant="ghost" size="icon" className="hover:bg-white/20">
+            <Button variant="ghost" size="icon" className="hover:bg-white/20 flex-shrink-0">
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-gradient-calm rounded-full">
-              <TrendingUp className="h-5 w-5 text-white" />
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="p-1.5 sm:p-2 bg-gradient-calm rounded-full flex-shrink-0">
+              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
             </div>
-            <div>
-              <h1 className="text-xl font-semibold text-foreground">Mood Tracking</h1>
-              <p className="text-sm text-muted-foreground">Track your daily emotional wellness</p>
+            <div className="min-w-0">
+              <h1 className="text-lg sm:text-xl font-semibold text-foreground truncate">Mood Tracking</h1>
+              <p className="text-xs sm:text-sm text-muted-foreground truncate">Track your daily emotional wellness</p>
             </div>
           </div>
         </div>
 
         {/* View Toggle */}
-        <div className="flex mb-6 bg-white/50 rounded-lg p-1 w-fit">
+        <div className="flex mb-4 sm:mb-6 bg-white/50 rounded-lg p-1 w-full sm:w-fit">
           <Button
             variant={view === "track" ? "default" : "ghost"}
             size="sm"
             onClick={() => setView("track")}
-            className={view === "track" ? "bg-gradient-calm" : ""}
+            className={`flex-1 sm:flex-initial text-xs sm:text-sm ${view === "track" ? "bg-gradient-calm" : ""}`}
           >
             Track Mood
           </Button>
@@ -168,32 +168,32 @@ const MoodTracking = () => {
             variant={view === "history" ? "default" : "ghost"}
             size="sm"
             onClick={() => setView("history")}
-            className={view === "history" ? "bg-gradient-calm" : ""}
+            className={`flex-1 sm:flex-initial text-xs sm:text-sm ${view === "history" ? "bg-gradient-calm" : ""}`}
           >
             View History
           </Button>
         </div>
 
         {view === "track" ? (
-          <div className="grid gap-6">
-            <Card className="p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0">
-              <h2 className="text-lg font-medium mb-4 flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-primary" />
+          <div className="grid gap-4 sm:gap-6">
+            <Card className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0">
+              <h2 className="text-base sm:text-lg font-medium mb-4 flex items-center gap-2">
+                <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                 How are you feeling today?
               </h2>
               
-              <div className="grid grid-cols-5 gap-3 mb-6">
+              <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 sm:gap-3 mb-4 sm:mb-6">
                 {moods.map((mood) => (
                   <button
                     key={mood.value}
                     onClick={() => setSelectedMood(mood.value)}
-                    className={`p-4 rounded-xl text-center transition-all ${
+                    className={`p-2 sm:p-4 rounded-xl text-center transition-all ${
                       selectedMood === mood.value 
                         ? 'ring-2 ring-primary ring-offset-2 transform scale-105' 
                         : ''
                     } ${mood.color}`}
                   >
-                    <div className="text-2xl mb-2">{mood.emoji}</div>
+                    <div className="text-lg sm:text-2xl mb-1 sm:mb-2">{mood.emoji}</div>
                     <div className="text-xs font-medium">{mood.label}</div>
                   </button>
                 ))}
@@ -213,7 +213,7 @@ const MoodTracking = () => {
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="What influenced your mood today?"
-                  className="w-full p-3 border border-border rounded-lg bg-white/50 focus:border-primary focus:ring-1 focus:ring-primary resize-none"
+                  className="w-full p-3 border border-border rounded-lg bg-white/50 focus:border-primary focus:ring-1 focus:ring-primary resize-none text-sm"
                   rows={3}
                 />
               </div>
@@ -227,15 +227,15 @@ const MoodTracking = () => {
               </Button>
 
               {showSuccess && (
-                <div className="mt-4 p-3 bg-green-100 text-green-800 rounded-lg text-center">
+                <div className="mt-4 p-3 bg-green-100 text-green-800 rounded-lg text-center text-sm">
                   Mood saved successfully! 📝
                 </div>
               )}
             </Card>
 
-            <Card className="p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0">
-              <h2 className="text-lg font-medium mb-4 flex items-center gap-2">
-                <BarChart3 className="h-5 w-5 text-primary" />
+            <Card className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0">
+              <h2 className="text-base sm:text-lg font-medium mb-4 flex items-center gap-2">
+                <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                 Your Progress
               </h2>
               

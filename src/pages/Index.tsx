@@ -1,47 +1,113 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { MessageCircle, TrendingUp, Heart, Brain, Shield, Users } from "lucide-react";
+import { MessageCircle, TrendingUp, Heart, Brain, Shield, Users, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import heroImage from "@/assets/hero-image.jpg";
 
 const Index = () => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-gradient-peaceful">
+      {/* Mobile Navigation */}
+      <nav className="bg-white/80 backdrop-blur-sm border-b border-border/20 sticky top-0 z-50">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-2">
+              <Brain className="h-8 w-8 text-primary" />
+              <span className="text-xl font-semibold text-foreground">CalmMind</span>
+            </div>
+            
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-8">
+              <Link to="/chat" className="text-muted-foreground hover:text-primary transition-colors">Chat</Link>
+              <Link to="/mood" className="text-muted-foreground hover:text-primary transition-colors">Mood Tracking</Link>
+              <Link to="/emergency" className="text-muted-foreground hover:text-primary transition-colors">Crisis Support</Link>
+              <Link to="/chat">
+                <Button className="bg-gradient-calm hover:shadow-glow">Get Started</Button>
+              </Link>
+            </div>
+            
+            {/* Mobile Menu Button */}
+            <div className="md:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label="Toggle menu"
+              >
+                {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </Button>
+            </div>
+          </div>
+          
+          {/* Mobile Menu */}
+          {mobileMenuOpen && (
+            <div className="md:hidden py-4 space-y-4 border-t border-border/20">
+              <Link 
+                to="/chat" 
+                className="block text-muted-foreground hover:text-primary transition-colors py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Chat Support
+              </Link>
+              <Link 
+                to="/mood" 
+                className="block text-muted-foreground hover:text-primary transition-colors py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Mood Tracking
+              </Link>
+              <Link 
+                to="/emergency" 
+                className="block text-muted-foreground hover:text-primary transition-colors py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Crisis Support
+              </Link>
+              <Link to="/chat" onClick={() => setMobileMenuOpen(false)}>
+                <Button className="w-full bg-gradient-calm hover:shadow-glow">Get Started</Button>
+              </Link>
+            </div>
+          )}
+        </div>
+      </nav>
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="container mx-auto px-4 py-20">
-          <div className="flex flex-col lg:flex-row items-center gap-12">
+      <section className="relative overflow-hidden py-12 md:py-20">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col lg:flex-row items-center gap-8 md:gap-12">
             <div className="flex-1 text-center lg:text-left">
-              <h1 className="text-5xl lg:text-6xl font-bold text-foreground mb-6">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
                 Your Mental Health
-                <span className="bg-gradient-calm bg-clip-text text-transparent"> Journey</span>
-                <br />Starts Here
+                <span className="bg-gradient-calm bg-clip-text text-transparent block"> Journey</span>
+                Starts Here
               </h1>
-              <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+              <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0">
                 Meet CalmMind, your supportive AI companion available 24/7. 
                 Track your mood, practice mindfulness, and get the support you deserve.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Link to="/chat">
-                  <Button size="lg" className="bg-gradient-calm hover:shadow-glow transition-all duration-300 px-8 py-6 text-lg">
+                  <Button size="lg" className="bg-gradient-calm hover:shadow-glow transition-all duration-300 px-6 md:px-8 py-4 md:py-6 text-base md:text-lg w-full sm:w-auto">
                     <MessageCircle className="mr-2 h-5 w-5" />
                     Start Chatting
                   </Button>
                 </Link>
                 <Link to="/mood">
-                  <Button variant="outline" size="lg" className="border-primary/30 hover:bg-primary/5 px-8 py-6 text-lg">
+                  <Button variant="outline" size="lg" className="border-primary/30 hover:bg-primary/5 px-6 md:px-8 py-4 md:py-6 text-base md:text-lg w-full sm:w-auto">
                     <TrendingUp className="mr-2 h-5 w-5" />
                     Track Your Mood
                   </Button>
                 </Link>
               </div>
             </div>
-            <div className="flex-1">
-              <div className="relative">
+            <div className="flex-1 w-full lg:w-auto">
+              <div className="relative max-w-md mx-auto lg:max-w-none">
                 <img 
                   src={heroImage} 
                   alt="Peaceful meditation scene representing mental wellness" 
-                  className="w-full h-80 lg:h-96 object-cover rounded-3xl shadow-gentle"
+                  className="w-full h-64 sm:h-80 lg:h-96 object-cover rounded-3xl shadow-gentle"
                 />
                 <div className="absolute inset-0 bg-gradient-calm/10 rounded-3xl"></div>
               </div>
@@ -51,74 +117,74 @@ const Index = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20">
+      <section className="py-12 md:py-20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">
+          <div className="text-center mb-12 md:mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               Everything You Need for Mental Wellness
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
               Comprehensive tools designed to support your mental health journey with empathy and understanding.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300">
               <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
-                <MessageCircle className="h-6 w-6 text-white" />
+                <MessageCircle className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">24/7 AI Support</h3>
-              <p className="text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-semibold mb-3">24/7 AI Support</h3>
+              <p className="text-sm md:text-base text-muted-foreground">
                 Chat with CalmMind anytime. Get empathetic responses, coping strategies, and gentle guidance whenever you need it.
               </p>
             </Card>
 
-            <Card className="p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300">
+            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300">
               <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
-                <TrendingUp className="h-6 w-6 text-white" />
+                <TrendingUp className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Mood Tracking</h3>
-              <p className="text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-semibold mb-3">Mood Tracking</h3>
+              <p className="text-sm md:text-base text-muted-foreground">
                 Monitor your emotional patterns over time. Understand your triggers and celebrate your progress.
               </p>
             </Card>
 
-            <Card className="p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300">
+            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 sm:col-span-2 lg:col-span-1">
               <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
-                <Brain className="h-6 w-6 text-white" />
+                <Brain className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Coping Strategies</h3>
-              <p className="text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-semibold mb-3">Coping Strategies</h3>
+              <p className="text-sm md:text-base text-muted-foreground">
                 Learn personalized techniques for managing anxiety, stress, and difficult emotions through guided exercises.
               </p>
             </Card>
 
-            <Card className="p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300">
+            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300">
               <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
-                <Shield className="h-6 w-6 text-white" />
+                <Shield className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Safe & Private</h3>
-              <p className="text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-semibold mb-3">Safe & Private</h3>
+              <p className="text-sm md:text-base text-muted-foreground">
                 Your conversations and data are completely confidential. Share openly in a judgment-free environment.
               </p>
             </Card>
 
-            <Card className="p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300">
+            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300">
               <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
-                <Heart className="h-6 w-6 text-white" />
+                <Heart className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Crisis Support</h3>
-              <p className="text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-semibold mb-3">Crisis Support</h3>
+              <p className="text-sm md:text-base text-muted-foreground">
                 Immediate access to crisis resources and hotlines when you need urgent support. You're never alone.
               </p>
             </Card>
 
-            <Card className="p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300">
+            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300">
               <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
-                <Users className="h-6 w-6 text-white" />
+                <Users className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Professional Bridge</h3>
-              <p className="text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-semibold mb-3">Professional Bridge</h3>
+              <p className="text-sm md:text-base text-muted-foreground">
                 Get recommendations for professional help and resources when needed. We complement, not replace, professional care.
               </p>
             </Card>
@@ -127,10 +193,10 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-warm/20">
+      <section className="py-12 md:py-20 bg-gradient-warm/20">
         <div className="container mx-auto px-4 text-center">
-          <Card className="max-w-2xl mx-auto p-8 bg-white/90 backdrop-blur-sm shadow-gentle border-0">
-            <h2 className="text-3xl font-bold text-foreground mb-4">
+          <Card className="max-w-2xl mx-auto p-6 md:p-8 bg-white/90 backdrop-blur-sm shadow-gentle border-0">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
               Ready to Start Your Wellness Journey?
             </h2>
             <p className="text-muted-foreground mb-6">
@@ -138,13 +204,13 @@ const Index = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/chat">
-                <Button size="lg" className="bg-gradient-calm hover:shadow-glow transition-all duration-300 px-8">
+                <Button size="lg" className="bg-gradient-calm hover:shadow-glow transition-all duration-300 px-6 md:px-8 w-full sm:w-auto">
                   <MessageCircle className="mr-2 h-5 w-5" />
                   Begin Your Journey
                 </Button>
               </Link>
               <Link to="/emergency">
-                <Button variant="outline" size="lg" className="border-red-300 text-red-600 hover:bg-red-50">
+                <Button variant="outline" size="lg" className="border-red-300 text-red-600 hover:bg-red-50 w-full sm:w-auto">
                   <Heart className="mr-2 h-5 w-5" />
                   Need Help Now?
                 </Button>
@@ -155,7 +221,7 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 border-t border-border/20">
+      <footer className="py-6 md:py-8 border-t border-border/20">
         <div className="container mx-auto px-4 text-center">
           <p className="text-muted-foreground text-sm">
             CalmMind is not a replacement for professional medical advice. 

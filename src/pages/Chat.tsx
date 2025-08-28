@@ -451,33 +451,33 @@ const Chat = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="container mx-auto px-4 py-6 max-w-4xl">
-        <div className="flex items-center gap-4 mb-6">
+      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6 max-w-4xl">
+        <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
           <Link to="/">
-            <Button variant="ghost" size="icon" className="rounded-full hover:bg-white/20">
+            <Button variant="ghost" size="icon" className="rounded-full hover:bg-white/20 flex-shrink-0">
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full">
-              <MessageCircle className="h-5 w-5 text-white" />
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="p-1.5 sm:p-2 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex-shrink-0">
+              <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
             </div>
-            <div>
-              <h1 className="text-xl font-semibold text-gray-800">CalmMind Chat</h1>
-              <p className="text-sm text-gray-600">Your supportive AI companion</p>
+            <div className="min-w-0">
+              <h1 className="text-lg sm:text-xl font-semibold text-gray-800 truncate">CalmMind Chat</h1>
+              <p className="text-xs sm:text-sm text-gray-600 truncate">Your supportive AI companion</p>
             </div>
           </div>
         </div>
 
         <Card className="bg-white/90 backdrop-blur-sm shadow-lg rounded-2xl border-0 overflow-hidden">
-          <div className="h-96 overflow-y-auto p-4 space-y-4">
+          <div className="h-[60vh] sm:h-96 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4">
             {messages.map((message) => (
               <div
                 key={message.id}
                 className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-xs px-4 py-3 rounded-2xl ${
+                  className={`max-w-[85%] sm:max-w-xs px-3 sm:px-4 py-2 sm:py-3 rounded-2xl ${
                     message.isUser
                       ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
                       : 'bg-gray-100 text-gray-800'
@@ -490,7 +490,7 @@ const Chat = () => {
                     />
                   ) : (
                     <>
-                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
                       <p className={`text-xs mt-1 ${message.isUser ? 'text-blue-100' : 'text-gray-500'}`}>
                         {formatTime(message.timestamp)}
                       </p>
@@ -503,9 +503,9 @@ const Chat = () => {
             {/* Loading indicator */}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="max-w-xs px-4 py-3 rounded-2xl bg-gray-100 text-gray-800">
+                <div className="max-w-[85%] sm:max-w-xs px-3 sm:px-4 py-2 sm:py-3 rounded-2xl bg-gray-100 text-gray-800">
                   <div className="flex items-center gap-2">
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
                     <span className="text-sm">CalmMind is typing...</span>
                   </div>
                 </div>
@@ -516,14 +516,14 @@ const Chat = () => {
 
           {/* Quick Actions */}
           {showQuickActions && (
-            <div className="px-4 py-3 border-t border-gray-200 bg-white/80">
+            <div className="px-3 sm:px-4 py-2 sm:py-3 border-t border-gray-200 bg-white/80">
               <p className="text-xs text-gray-500 mb-2">Quick actions:</p>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1 sm:gap-2">
                 <Button 
                   variant="outline" 
                   size="sm" 
                   onClick={() => handleQuickAction("I'm feeling anxious today")}
-                  className="text-xs h-8 rounded-full border-gray-300"
+                  className="text-xs h-7 sm:h-8 rounded-full border-gray-300 px-2 sm:px-3"
                 >
                   😰 I'm anxious
                 </Button>
@@ -531,7 +531,7 @@ const Chat = () => {
                   variant="outline" 
                   size="sm" 
                   onClick={() => handleQuickAction("I'm feeling sad")}
-                  className="text-xs h-8 rounded-full border-gray-300"
+                  className="text-xs h-7 sm:h-8 rounded-full border-gray-300 px-2 sm:px-3"
                 >
                   😔 I'm sad
                 </Button>
@@ -539,7 +539,7 @@ const Chat = () => {
                   variant="outline" 
                   size="sm" 
                   onClick={() => startBreathingExercise("4-7-8")}
-                  className="text-xs h-8 rounded-full border-blue-300 text-blue-700"
+                  className="text-xs h-7 sm:h-8 rounded-full border-blue-300 text-blue-700 px-2 sm:px-3"
                 >
                   🌬️ 4-7-8 Breathing
                 </Button>
@@ -547,7 +547,7 @@ const Chat = () => {
                   variant="outline" 
                   size="sm" 
                   onClick={() => startBreathingExercise("box")}
-                  className="text-xs h-8 rounded-full border-green-300 text-green-700"
+                  className="text-xs h-7 sm:h-8 rounded-full border-green-300 text-green-700 px-2 sm:px-3"
                 >
                   🧘 Box Breathing
                 </Button>
@@ -555,7 +555,7 @@ const Chat = () => {
                   variant="outline" 
                   size="sm" 
                   onClick={() => navigate("/mood")}
-                  className="text-xs h-8 rounded-full border-purple-300 text-purple-700"
+                  className="text-xs h-7 sm:h-8 rounded-full border-purple-300 text-purple-700 px-2 sm:px-3"
                 >
                   <TrendingUp className="h-3 w-3 mr-1" />
                   Track mood
@@ -564,19 +564,19 @@ const Chat = () => {
             </div>
           )}
 
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-3 sm:p-4 border-t border-gray-200">
             <div className="flex gap-2">
               <Input
                 placeholder="Share what's on your mind..."
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
-                className="flex-1 bg-white border-gray-300 focus:border-blue-500 rounded-full"
+                className="flex-1 bg-white border-gray-300 focus:border-blue-500 rounded-full text-sm"
                 disabled={isLoading}
               />
               <Button 
                 onClick={handleSendMessage} 
-                className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 rounded-full"
+                className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 rounded-full w-10 h-10 sm:w-auto sm:px-4 flex-shrink-0"
                 disabled={isLoading || !newMessage.trim()}
               >
                 {isLoading ? (
@@ -589,8 +589,8 @@ const Chat = () => {
           </div>
         </Card>
 
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
+        <div className="mt-4 sm:mt-6 text-center">
+          <p className="text-xs sm:text-sm text-gray-600 px-2">
             Remember: This is not a replacement for professional medical advice.
             {" "}
             <Link to="/emergency" className="text-blue-600 hover:underline font-medium">
