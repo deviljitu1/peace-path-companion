@@ -560,6 +560,15 @@ const Chat = () => {
                   <TrendingUp className="h-3 w-3 mr-1" />
                   Track mood
                 </Button>
+                                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => navigate("/MentalHealthQuiz")}
+                  className="text-xs h-7 sm:h-8 rounded-full border-purple-300 text-purple-700 px-2 sm:px-3"
+                >
+                  <TrendingUp className="h-3 w-3 mr-1" />
+                  Quize to Check Mental Health
+                </Button>
               </div>
             </div>
           )}
