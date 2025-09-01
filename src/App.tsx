@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Chat from "./pages/Chat";
 import MoodTracking from "./pages/MoodTracking";
 import Emergency from "./pages/Emergency";
+import Therapy from "./pages/Therapy";
 import NotFound from "./pages/NotFound";
 import MentalHealthQuiz from "./components/MentalHealthQuiz";
 
@@ -20,6 +21,7 @@ const App = () => (
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/chat" element={<Chat />} />
+        <Route path="/therapy" element={<Therapy />} />
         <Route path="/mood" element={<MoodTracking />} />
         <Route path="/emergency" element={<Emergency />} />
         <Route path="/MentalHealthQuiz" element={<MentalHealthQuiz />} />

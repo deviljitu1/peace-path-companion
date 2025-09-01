@@ -22,7 +22,7 @@ const Index = () => {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
               <Link to="/chat" className="text-muted-foreground hover:text-primary transition-colors">Chat</Link>
-              <Link to="/mood" className="text-muted-foreground hover:text-primary transition-colors">Mood Tracking</Link>
+              <Link to="/therapy" className="text-muted-foreground hover:text-primary transition-colors">Therapy</Link>
               <Link to="/emergency" className="text-muted-foreground hover:text-primary transition-colors">Crisis Support</Link>
               <Link to="/chat">
                 <Button className="bg-gradient-calm hover:shadow-glow">Get Started</Button>
