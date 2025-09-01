@@ -136,19 +136,19 @@ const MoodTracking = () => {
 
   return (
     <div className="min-h-screen bg-gradient-peaceful">
-      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6 max-w-4xl">
-        <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+      <div className="container mx-auto px-3 sm:px-6 py-3 sm:py-6 max-w-4xl">
+        <div className="flex items-center gap-2 sm:gap-4 mb-3 sm:mb-6">
           <Link to="/">
-            <Button variant="ghost" size="icon" className="hover:bg-white/20 flex-shrink-0">
-              <ArrowLeft className="h-4 w-4" />
+            <Button variant="ghost" size="icon" className="hover:bg-white/20 flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10">
+              <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
             </Button>
           </Link>
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <div className="p-1.5 sm:p-2 bg-gradient-calm rounded-full flex-shrink-0">
-              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+            <div className="p-1 sm:p-2 bg-gradient-calm rounded-full flex-shrink-0">
+              <TrendingUp className="h-3 w-3 sm:h-5 sm:w-5 text-white" />
             </div>
-            <div className="min-w-0">
-              <h1 className="text-lg sm:text-xl font-semibold text-foreground truncate">Mood Tracking</h1>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-base sm:text-xl font-semibold text-foreground truncate">Mood Tracking</h1>
               <p className="text-xs sm:text-sm text-muted-foreground truncate">Track your daily emotional wellness</p>
             </div>
           </div>
@@ -182,19 +182,19 @@ const MoodTracking = () => {
                 How are you feeling today?
               </h2>
               
-              <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 sm:gap-3 mb-4 sm:mb-6">
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3 mb-4 sm:mb-6">
                 {moods.map((mood) => (
                   <button
                     key={mood.value}
                     onClick={() => setSelectedMood(mood.value)}
-                    className={`p-2 sm:p-4 rounded-xl text-center transition-all ${
+                    className={`p-3 sm:p-4 rounded-xl text-center transition-all min-h-[80px] sm:min-h-[100px] touch-manipulation ${
                       selectedMood === mood.value 
                         ? 'ring-2 ring-primary ring-offset-2 transform scale-105' 
                         : ''
                     } ${mood.color}`}
                   >
-                    <div className="text-lg sm:text-2xl mb-1 sm:mb-2">{mood.emoji}</div>
-                    <div className="text-xs font-medium">{mood.label}</div>
+                    <div className="text-2xl sm:text-3xl mb-1 sm:mb-2">{mood.emoji}</div>
+                    <div className="text-xs sm:text-sm font-medium leading-tight">{mood.label}</div>
                   </button>
                 ))}
               </div>
@@ -271,45 +271,45 @@ const MoodTracking = () => {
             </Card>
           </div>
         ) : (
-          <Card className="p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0">
-            <h2 className="text-lg font-medium mb-4">Mood History</h2>
+          <Card className="p-3 sm:p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0">
+            <h2 className="text-base sm:text-lg font-medium mb-4">Mood History</h2>
             
             {moodHistory.length > 0 ? (
-              <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+              <div className="space-y-3 sm:space-y-4 max-h-[60vh] sm:max-h-96 overflow-y-auto pr-1 sm:pr-2">
                 {moodHistory.map(entry => {
                   const moodData = moods.find(m => m.value === entry.mood);
                   return (
-                    <div key={entry.id} className="flex items-start justify-between p-3 border-b border-border">
-                      <div className="flex items-start gap-3">
-                        <span className="text-2xl">{moodData.emoji}</span>
-                        <div>
-                          <p className="font-medium">{moodData.label}</p>
-                          <p className="text-sm text-muted-foreground">{formatDate(entry.date)}</p>
-                          {entry.note && <p className="text-sm mt-1">{entry.note}</p>}
+                    <div key={entry.id} className="flex items-start justify-between p-2 sm:p-3 border-b border-border">
+                      <div className="flex items-start gap-2 sm:gap-3 flex-1 min-w-0">
+                        <span className="text-xl sm:text-2xl flex-shrink-0">{moodData.emoji}</span>
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-sm sm:text-base">{moodData.label}</p>
+                          <p className="text-xs sm:text-sm text-muted-foreground">{formatDate(entry.date)}</p>
+                          {entry.note && <p className="text-xs sm:text-sm mt-1 break-words">{entry.note}</p>}
                         </div>
                       </div>
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => handleDeleteEntry(entry.id)}
-                        className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                        className="h-7 w-7 sm:h-8 sm:w-8 text-muted-foreground hover:text-destructive flex-shrink-0 ml-2"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                       </Button>
                     </div>
                   );
                 })}
               </div>
             ) : (
-              <div className="text-center py-8 text-muted-foreground">
-                <Calendar className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                <p>No mood entries yet. Start tracking to see your history here.</p>
+              <div className="text-center py-6 sm:py-8 text-muted-foreground">
+                <Calendar className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-3 opacity-50" />
+                <p className="text-sm sm:text-base">No mood entries yet. Start tracking to see your history here.</p>
               </div>
             )}
             
             <Button 
               variant="outline" 
-              className="w-full mt-4"
+              className="w-full mt-3 sm:mt-4 text-sm sm:text-base"
               onClick={() => setView("track")}
             >
               Back to Mood Tracking
