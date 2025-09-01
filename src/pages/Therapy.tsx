@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { ArrowLeft, Heart, Brain, Wind, Volume2, BookOpen, Sunrise } from "lucide-react";
 import { Link } from "react-router-dom";
 import { BreathingExercise } from "@/components/therapy/BreathingExercise";
-import { MeditationTimer } = "@/components/therapy/MeditationTimer";
+import { MeditationTimer } from "@/components/therapy/MeditationTimer"; // Fixed this line
 import { GroundingTechnique } from "@/components/therapy/GroundingTechnique";
 import { CalmingSounds } from "@/components/therapy/CalmingSounds";
 import { Affirmations } from "@/components/therapy/Affirmations";
