@@ -8,6 +8,10 @@ import Chat from "./pages/Chat";
 import MoodTracking from "./pages/MoodTracking";
 import Emergency from "./pages/Emergency";
 import Therapy from "./pages/Therapy";
+import CrisisSupport from "./pages/CrisisSupport";
+import Journal from "./pages/Journal";
+import MedicationTracker from "./pages/MedicationTracker";
+import SymptomsTracker from "./pages/SymptomsTracker";
 import NotFound from "./pages/NotFound";
 import MentalHealthQuiz from "./components/MentalHealthQuiz";
 
@@ -24,6 +28,10 @@ const App = () => (
         <Route path="/therapy" element={<Therapy />} />
         <Route path="/mood" element={<MoodTracking />} />
         <Route path="/emergency" element={<Emergency />} />
+        <Route path="/crisis-support" element={<CrisisSupport />} />
+        <Route path="/journal" element={<Journal />} />
+        <Route path="/medication" element={<MedicationTracker />} />
+        <Route path="/symptoms" element={<SymptomsTracker />} />
         <Route path="/MentalHealthQuiz" element={<MentalHealthQuiz />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />

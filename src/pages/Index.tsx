@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { MessageCircle, TrendingUp, Heart, Brain, Shield, Users, Menu, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { MessageCircle, TrendingUp, Heart, Brain, Shield, Users, Menu, X, BookOpen, Pill, AlertTriangle } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import heroImage from "@/assets/hero-image.jpg";
 
 const Index = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gradient-peaceful">
@@ -176,6 +177,56 @@ const Index = () => {
               <h3 className="text-lg md:text-xl font-semibold mb-3">Crisis Support</h3>
               <p className="text-sm md:text-base text-muted-foreground">
                 Immediate access to crisis resources and hotlines when you need urgent support. You're never alone.
+              </p>
+            </Card>
+
+            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 cursor-pointer" onClick={() => navigate("/therapy")}>
+              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
+                <Brain className="h-5 w-5 md:h-6 md:w-6 text-white" />
+              </div>
+              <h3 className="text-lg md:text-xl font-semibold mb-3">Therapy & Wellness</h3>
+              <p className="text-sm md:text-base text-muted-foreground">
+                Guided breathing, meditation, grounding techniques, and calming exercises for your mental wellness.
+              </p>
+            </Card>
+
+            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 cursor-pointer" onClick={() => navigate("/crisis-support")}>
+              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
+                <Shield className="h-5 w-5 md:h-6 md:w-6 text-white" />
+              </div>
+              <h3 className="text-lg md:text-xl font-semibold mb-3">Safety Plan</h3>
+              <p className="text-sm md:text-base text-muted-foreground">
+                Create a personalized crisis support plan with coping strategies and emergency contacts.
+              </p>
+            </Card>
+
+            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 cursor-pointer" onClick={() => navigate("/journal")}>
+              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
+                <BookOpen className="h-5 w-5 md:h-6 md:w-6 text-white" />
+              </div>
+              <h3 className="text-lg md:text-xl font-semibold mb-3">Daily Journal</h3>
+              <p className="text-sm md:text-base text-muted-foreground">
+                Reflect on your thoughts and feelings to promote self-awareness and emotional processing.
+              </p>
+            </Card>
+
+            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 cursor-pointer" onClick={() => navigate("/medication")}>
+              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
+                <Pill className="h-5 w-5 md:h-6 md:w-6 text-white" />
+              </div>
+              <h3 className="text-lg md:text-xl font-semibold mb-3">Medication Tracker</h3>
+              <p className="text-sm md:text-base text-muted-foreground">
+                Track your medications, monitor adherence, and note effects to support your treatment.
+              </p>
+            </Card>
+
+            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 cursor-pointer" onClick={() => navigate("/symptoms")}>
+              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
+                <TrendingUp className="h-5 w-5 md:h-6 md:w-6 text-white" />
+              </div>
+              <h3 className="text-lg md:text-xl font-semibold mb-3">Symptoms Tracker</h3>
+              <p className="text-sm md:text-base text-muted-foreground">
+                Monitor anxiety, mood, and other symptoms to identify patterns and track progress.
               </p>
             </Card>
 
