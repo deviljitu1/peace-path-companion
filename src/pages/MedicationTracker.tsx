@@ -4,7 +4,8 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Pill, Plus, Check, X, Clock, AlertTriangle } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { ArrowLeft, Pill, Plus, Check, X, Clock, AlertTriangle, Bell, Calendar, TrendingUp, Download } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
@@ -31,6 +32,8 @@ const MedicationTracker = () => {
   const [medications, setMedications] = useState<Medication[]>([]);
   const [logs, setLogs] = useState<MedicationLog[]>([]);
   const [isAddingMed, setIsAddingMed] = useState(false);
+  const [remindersEnabled, setRemindersEnabled] = useState(false);
+  const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month'>('week');
   const [newMed, setNewMed] = useState({
     name: "",
     dosage: "",
@@ -125,6 +128,88 @@ const MedicationTracker = () => {
   const getTodayLog = (medicationId: string) => {
     const today = new Date().toISOString().split('T')[0];
     return logs.find(log => log.medicationId === medicationId && log.date === today);
+  };
+
+  const getAdherenceRate = (medicationId: string, days: number = 7) => {
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(endDate.getDate() - days);
+    
+    const relevantLogs = logs.filter(log => {
+      const logDate = new Date(log.date);
+      return log.medicationId === medicationId && 
+             logDate >= startDate && 
+             logDate <= endDate &&
+             log.taken;
+    });
+    
+    return Math.round((relevantLogs.length / days) * 100);
+  };
+
+  const getOverallAdherence = (days: number = 7) => {
+    if (medications.length === 0) return 0;
+    
+    const totalRate = medications.reduce((sum, med) => {
+      return sum + getAdherenceRate(med.id, days);
+    }, 0);
+    
+    return Math.round(totalRate / medications.length);
+  };
+
+  const getMissedDoses = () => {
+    const today = new Date().toISOString().split('T')[0];
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
+    
+    return medications.filter(med => {
+      const todayLog = getTodayLog(med.id);
+      const yesterdayLog = logs.find(log => 
+        log.medicationId === med.id && log.date === yesterdayStr
+      );
+      
+      return (!todayLog || !todayLog.taken) || 
+             (!yesterdayLog || !yesterdayLog.taken);
+    });
+  };
+
+  const exportMedicationData = () => {
+    const exportData = {
+      medications,
+      logs,
+      exportDate: new Date().toISOString(),
+      adherenceStats: {
+        weekly: getOverallAdherence(7),
+        monthly: getOverallAdherence(30)
+      }
+    };
+    
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `medication-tracker-${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Data exported",
+      description: "Your medication data has been exported successfully.",
+    });
+  };
+
+  const requestNotificationPermission = async () => {
+    if ("Notification" in window) {
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        setRemindersEnabled(true);
+        toast({
+          title: "Notifications enabled",
+          description: "You'll receive medication reminders.",
+        });
+      }
+    }
   };
 
   const addTimeSlot = () => {
@@ -282,11 +367,92 @@ const MedicationTracker = () => {
               <p className="text-xs sm:text-sm text-muted-foreground">Track your daily medications</p>
             </div>
           </div>
-          <Button onClick={() => setIsAddingMed(true)} className="bg-gradient-primary">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Med
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => setIsAddingMed(true)} className="bg-gradient-primary">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Med
+            </Button>
+            <Button variant="outline" onClick={exportMedicationData}>
+              <Download className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
+
+        {/* Adherence Overview */}
+        {medications.length > 0 && (
+          <Card className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0 mb-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-primary" />
+                <h2 className="font-semibold">Adherence Overview</h2>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant={selectedPeriod === 'week' ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedPeriod('week')}
+                >
+                  Week
+                </Button>
+                <Button
+                  variant={selectedPeriod === 'month' ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedPeriod('month')}
+                >
+                  Month
+                </Button>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+              <div className="text-center p-3 bg-blue-50 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600">
+                  {getOverallAdherence(selectedPeriod === 'week' ? 7 : 30)}%
+                </div>
+                <div className="text-sm text-muted-foreground">Overall Adherence</div>
+              </div>
+              <div className="text-center p-3 bg-green-50 rounded-lg">
+                <div className="text-2xl font-bold text-green-600">
+                  {medications.filter(med => getTodayLog(med.id)?.taken).length}
+                </div>
+                <div className="text-sm text-muted-foreground">Taken Today</div>
+              </div>
+              <div className="text-center p-3 bg-amber-50 rounded-lg">
+                <div className="text-2xl font-bold text-amber-600">
+                  {getMissedDoses().length}
+                </div>
+                <div className="text-sm text-muted-foreground">Recent Missed</div>
+              </div>
+            </div>
+
+            <Progress value={getOverallAdherence(selectedPeriod === 'week' ? 7 : 30)} className="mb-2" />
+            <p className="text-xs text-muted-foreground">
+              {selectedPeriod === 'week' ? '7-day' : '30-day'} adherence rate
+            </p>
+          </Card>
+        )}
+
+        {/* Notification Settings */}
+        {medications.length > 0 && (
+          <Card className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0 mb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Bell className="h-5 w-5 text-primary" />
+                <div>
+                  <h3 className="font-semibold">Medication Reminders</h3>
+                  <p className="text-xs text-muted-foreground">Get notified when it's time to take your medication</p>
+                </div>
+              </div>
+              <Button
+                variant={remindersEnabled ? "default" : "outline"}
+                onClick={requestNotificationPermission}
+                disabled={remindersEnabled}
+              >
+                {remindersEnabled ? "Enabled" : "Enable"}
+              </Button>
+            </div>
+          </Card>
+        )}
 
         {medications.length === 0 ? (
           <Card className="p-6 sm:p-8 bg-white/80 backdrop-blur-sm shadow-gentle border-0 text-center">
@@ -326,6 +492,20 @@ const MedicationTracker = () => {
                         {medication.notes && (
                           <p className="text-xs text-muted-foreground mt-1">{medication.notes}</p>
                         )}
+                        
+                        {/* Adherence indicator */}
+                        <div className="mt-2 flex items-center gap-2">
+                          <div className="flex-1">
+                            <div className="flex justify-between text-xs mb-1">
+                              <span>Adherence ({selectedPeriod})</span>
+                              <span>{getAdherenceRate(medication.id, selectedPeriod === 'week' ? 7 : 30)}%</span>
+                            </div>
+                            <Progress 
+                              value={getAdherenceRate(medication.id, selectedPeriod === 'week' ? 7 : 30)} 
+                              className="h-2"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                     

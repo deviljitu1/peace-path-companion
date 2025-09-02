@@ -4,7 +4,8 @@ import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, TrendingUp, Plus, Calendar } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { ArrowLeft, TrendingUp, Plus, Calendar, BarChart3, Download, Bell, AlertCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
@@ -26,6 +27,7 @@ interface SymptomEntry {
 const SymptomsTracker = () => {
   const [entries, setEntries] = useState<SymptomEntry[]>([]);
   const [isLogging, setIsLogging] = useState(false);
+  const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month'>('week');
   const [currentEntry, setCurrentEntry] = useState<Omit<SymptomEntry, 'id' | 'date'>>({
     anxiety: 5,
     depression: 5,
@@ -148,6 +150,110 @@ const SymptomsTracker = () => {
     return "text-green-600 bg-green-100";
   };
 
+  const getTrendAnalysis = (symptom: string, days: number = 7) => {
+    if (entries.length < 2) return { trend: 'stable', change: 0 };
+    
+    const recentEntries = entries
+      .slice(0, days)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    
+    if (recentEntries.length < 2) return { trend: 'stable', change: 0 };
+    
+    const firstValue = recentEntries[0][symptom as keyof SymptomEntry] as number;
+    const lastValue = recentEntries[recentEntries.length - 1][symptom as keyof SymptomEntry] as number;
+    const change = ((lastValue - firstValue) / firstValue) * 100;
+    
+    let trend: 'improving' | 'worsening' | 'stable' = 'stable';
+    if (Math.abs(change) > 10) {
+      // For symptoms like anxiety/depression/irritability, lower is better
+      if (['anxiety', 'depression', 'irritability'].includes(symptom)) {
+        trend = change < 0 ? 'improving' : 'worsening';
+      } else {
+        // For sleep, energy, concentration, appetite, socialConnection, higher is better
+        trend = change > 0 ? 'improving' : 'worsening';
+      }
+    }
+    
+    return { trend, change: Math.abs(change) };
+  };
+
+  const getOverallWellness = (days: number = 7) => {
+    if (entries.length === 0) return 0;
+    
+    const recentEntries = entries.slice(0, days);
+    const avgScores = recentEntries.reduce((acc, entry) => {
+      // Invert negative symptoms (lower is better) and normalize to 0-100
+      acc.anxiety += (10 - entry.anxiety) * 10;
+      acc.depression += (10 - entry.depression) * 10;
+      acc.irritability += (10 - entry.irritability) * 10;
+      // Positive symptoms (higher is better)
+      acc.sleep += entry.sleep * 10;
+      acc.energy += entry.energy * 10;
+      acc.concentration += entry.concentration * 10;
+      acc.appetite += entry.appetite * 10;
+      acc.socialConnection += entry.socialConnection * 10;
+      return acc;
+    }, { anxiety: 0, depression: 0, sleep: 0, energy: 0, concentration: 0, irritability: 0, appetite: 0, socialConnection: 0 });
+    
+    const totalSymptoms = 8;
+    const overallScore = Object.values(avgScores).reduce((sum, score) => sum + score, 0);
+    return Math.round(overallScore / (recentEntries.length * totalSymptoms));
+  };
+
+  const getWorstSymptoms = (days: number = 7) => {
+    if (entries.length === 0) return [];
+    
+    const recentEntries = entries.slice(0, days);
+    const avgSymptoms = symptoms.map(symptom => {
+      const avg = recentEntries.reduce((sum, entry) => {
+        const value = entry[symptom.key as keyof SymptomEntry] as number;
+        // For negative symptoms, invert the score (anxiety 8/10 becomes 2/10)
+        if (['anxiety', 'depression', 'irritability'].includes(symptom.key)) {
+          return sum + (10 - value);
+        }
+        return sum + value;
+      }, 0) / recentEntries.length;
+      
+      return { ...symptom, avgScore: avg };
+    });
+    
+    return avgSymptoms
+      .sort((a, b) => a.avgScore - b.avgScore)
+      .slice(0, 3);
+  };
+
+  const exportSymptomData = () => {
+    const exportData = {
+      entries,
+      exportDate: new Date().toISOString(),
+      analysis: {
+        overallWellness: {
+          weekly: getOverallWellness(7),
+          monthly: getOverallWellness(30)
+        },
+        trends: symptoms.map(symptom => ({
+          symptom: symptom.label,
+          weeklyTrend: getTrendAnalysis(symptom.key, 7),
+          monthlyTrend: getTrendAnalysis(symptom.key, 30)
+        }))
+      }
+    };
+    
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `symptoms-tracker-${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Data exported",
+      description: "Your symptoms data has been exported successfully.",
+    });
+  };
+
   if (isLogging) {
     return (
       <div className="min-h-screen bg-gradient-peaceful">
@@ -260,11 +366,99 @@ const SymptomsTracker = () => {
               <p className="text-xs sm:text-sm text-muted-foreground">Monitor your mental health symptoms</p>
             </div>
           </div>
-          <Button onClick={() => setIsLogging(true)} className="bg-gradient-primary">
-            <Plus className="h-4 w-4 mr-2" />
-            Log Today
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => setIsLogging(true)} className="bg-gradient-primary">
+              <Plus className="h-4 w-4 mr-2" />
+              Log Today
+            </Button>
+            <Button variant="outline" onClick={exportSymptomData}>
+              <Download className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
+
+        {/* Wellness Dashboard */}
+        {entries.length > 0 && (
+          <>
+            <Card className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0 mb-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5 text-primary" />
+                  <h2 className="font-semibold">Wellness Overview</h2>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant={selectedPeriod === 'week' ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedPeriod('week')}
+                  >
+                    Week
+                  </Button>
+                  <Button
+                    variant={selectedPeriod === 'month' ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedPeriod('month')}
+                  >
+                    Month
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div className="text-center p-3 bg-blue-50 rounded-lg">
+                  <div className="text-2xl font-bold text-blue-600">
+                    {getOverallWellness(selectedPeriod === 'week' ? 7 : 30)}%
+                  </div>
+                  <div className="text-sm text-muted-foreground">Overall Wellness</div>
+                </div>
+                <div className="text-center p-3 bg-green-50 rounded-lg">
+                  <div className="text-2xl font-bold text-green-600">
+                    {entries.length}
+                  </div>
+                  <div className="text-sm text-muted-foreground">Total Entries</div>
+                </div>
+              </div>
+
+              <Progress 
+                value={getOverallWellness(selectedPeriod === 'week' ? 7 : 30)} 
+                className="mb-2" 
+              />
+              <p className="text-xs text-muted-foreground">
+                {selectedPeriod === 'week' ? '7-day' : '30-day'} wellness score
+              </p>
+            </Card>
+
+            {/* Symptoms Needing Attention */}
+            <Card className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0 mb-4">
+              <div className="flex items-center gap-2 mb-3">
+                <AlertCircle className="h-5 w-5 text-amber-500" />
+                <h3 className="font-semibold">Areas Needing Attention</h3>
+              </div>
+              <div className="grid gap-2">
+                {getWorstSymptoms(selectedPeriod === 'week' ? 7 : 30).map((symptom, index) => {
+                  const trend = getTrendAnalysis(symptom.key, selectedPeriod === 'week' ? 7 : 30);
+                  return (
+                    <div key={symptom.key} className="flex items-center justify-between p-2 bg-amber-50 rounded">
+                      <div>
+                        <span className="text-sm font-medium">{symptom.label}</span>
+                        <div className="text-xs text-muted-foreground">
+                          Score: {symptom.avgScore.toFixed(1)}/10
+                        </div>
+                      </div>
+                      <Badge 
+                        variant={trend.trend === 'improving' ? 'default' : trend.trend === 'worsening' ? 'destructive' : 'outline'}
+                        className="text-xs"
+                      >
+                        {trend.trend === 'improving' ? '↑' : trend.trend === 'worsening' ? '↓' : '→'} 
+                        {trend.change.toFixed(0)}%
+                      </Badge>
+                    </div>
+                  );
+                })}
+              </div>
+            </Card>
+          </>
+        )}
 
         {entries.length === 0 ? (
           <Card className="p-6 sm:p-8 bg-white/80 backdrop-blur-sm shadow-gentle border-0 text-center">

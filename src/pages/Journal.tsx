@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, BookOpen, Plus, Trash2, Edit3 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, BookOpen, Plus, Trash2, Edit3, Download, Search, Filter, Smile, Frown, Meh, Calendar, Clock, BarChart3 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
@@ -13,30 +14,76 @@ interface JournalEntry {
   title: string;
   content: string;
   mood: string;
+  moodRating: number;
   thoughts: string;
   gratitude: string;
+  tags: string[];
 }
 
 const Journal = () => {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
+  const [filteredEntries, setFilteredEntries] = useState<JournalEntry[]>([]);
   const [isWriting, setIsWriting] = useState(false);
   const [editingEntry, setEditingEntry] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [moodFilter, setMoodFilter] = useState<string>("");
   const [currentEntry, setCurrentEntry] = useState({
     title: "",
     content: "",
     mood: "",
+    moodRating: 5,
     thoughts: "",
-    gratitude: ""
+    gratitude: "",
+    tags: []
   });
   const { toast } = useToast();
+
+  const moodEmojis = {
+    1: { emoji: "😢", label: "Very Sad", color: "text-red-600" },
+    2: { emoji: "😟", label: "Sad", color: "text-orange-600" },
+    3: { emoji: "😐", label: "Neutral", color: "text-yellow-600" },
+    4: { emoji: "🙂", label: "Good", color: "text-blue-600" },
+    5: { emoji: "😊", label: "Very Good", color: "text-green-600" }
+  };
+
+  const commonTags = [
+    "anxiety", "depression", "stress", "work", "relationships", "family", 
+    "health", "sleep", "exercise", "therapy", "medication", "breakthrough",
+    "gratitude", "progress", "challenge", "support", "mindfulness", "self-care"
+  ];
 
   useEffect(() => {
     // Load entries from localStorage
     const savedEntries = localStorage.getItem('journalEntries');
     if (savedEntries) {
-      setEntries(JSON.parse(savedEntries));
+      const loadedEntries = JSON.parse(savedEntries);
+      setEntries(loadedEntries);
+      setFilteredEntries(loadedEntries);
     }
   }, []);
+
+  useEffect(() => {
+    // Filter entries based on search and mood filter
+    let filtered = entries;
+    
+    if (searchTerm) {
+      filtered = filtered.filter(entry =>
+        entry.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        entry.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        entry.thoughts.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        entry.gratitude.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        entry.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+    }
+    
+    if (moodFilter) {
+      filtered = filtered.filter(entry => 
+        entry.moodRating === parseInt(moodFilter)
+      );
+    }
+    
+    setFilteredEntries(filtered);
+  }, [entries, searchTerm, moodFilter]);
 
   const saveEntries = (newEntries: JournalEntry[]) => {
     setEntries(newEntries);
@@ -69,7 +116,15 @@ const Journal = () => {
     }
 
     saveEntries(updatedEntries);
-    setCurrentEntry({ title: "", content: "", mood: "", thoughts: "", gratitude: "" });
+    setCurrentEntry({ 
+      title: "", 
+      content: "", 
+      mood: "", 
+      moodRating: 5, 
+      thoughts: "", 
+      gratitude: "", 
+      tags: [] 
+    });
     setIsWriting(false);
     setEditingEntry(null);
     
@@ -84,8 +139,10 @@ const Journal = () => {
       title: entry.title,
       content: entry.content,
       mood: entry.mood,
+      moodRating: entry.moodRating || 5,
       thoughts: entry.thoughts,
-      gratitude: entry.gratitude
+      gratitude: entry.gratitude,
+      tags: entry.tags || []
     });
     setEditingEntry(entry.id);
     setIsWriting(true);
@@ -111,6 +168,48 @@ const Journal = () => {
     });
   };
 
+  const exportEntries = () => {
+    const dataStr = JSON.stringify(entries, null, 2);
+    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `journal-entries-${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Export successful",
+      description: "Your journal entries have been exported.",
+    });
+  };
+
+  const toggleTag = (tag: string) => {
+    const tags = currentEntry.tags || [];
+    const updatedTags = tags.includes(tag)
+      ? tags.filter(t => t !== tag)
+      : [...tags, tag];
+    
+    setCurrentEntry({
+      ...currentEntry,
+      tags: updatedTags
+    });
+  };
+
+  const getMoodStats = () => {
+    if (entries.length === 0) return null;
+    
+    const moodCounts = entries.reduce((acc, entry) => {
+      const rating = entry.moodRating || 3;
+      acc[rating] = (acc[rating] || 0) + 1;
+      return acc;
+    }, {} as Record<number, number>);
+    
+    const avgMood = entries.reduce((sum, entry) => sum + (entry.moodRating || 3), 0) / entries.length;
+    
+    return { moodCounts, avgMood };
+  };
+
   if (isWriting) {
     return (
       <div className="min-h-screen bg-gradient-peaceful">
@@ -122,7 +221,15 @@ const Journal = () => {
               onClick={() => {
                 setIsWriting(false);
                 setEditingEntry(null);
-                setCurrentEntry({ title: "", content: "", mood: "", thoughts: "", gratitude: "" });
+                setCurrentEntry({ 
+                  title: "", 
+                  content: "", 
+                  mood: "", 
+                  moodRating: 5, 
+                  thoughts: "", 
+                  gratitude: "", 
+                  tags: [] 
+                });
               }}
               className="hover:bg-white/20 h-8 w-8 sm:h-10 sm:w-10"
             >
@@ -151,6 +258,30 @@ const Journal = () => {
                   value={currentEntry.mood}
                   onChange={(e) => setCurrentEntry({...currentEntry, mood: e.target.value})}
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Mood Rating (1-5)</label>
+                <div className="flex items-center gap-2 mb-2">
+                  {[1, 2, 3, 4, 5].map((rating) => (
+                    <button
+                      key={rating}
+                      type="button"
+                      onClick={() => setCurrentEntry({...currentEntry, moodRating: rating})}
+                      className={`p-2 rounded-lg border-2 transition-all ${
+                        currentEntry.moodRating === rating 
+                          ? 'border-primary bg-primary/10' 
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="text-2xl">{moodEmojis[rating as keyof typeof moodEmojis].emoji}</div>
+                      <div className="text-xs text-center">{rating}</div>
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {moodEmojis[currentEntry.moodRating as keyof typeof moodEmojis]?.label}
+                </p>
               </div>
 
               <div>
@@ -183,6 +314,24 @@ const Journal = () => {
                 />
               </div>
 
+              <div>
+                <label className="block text-sm font-medium mb-2">Tags (optional)</label>
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mb-2">
+                  {commonTags.map((tag) => (
+                    <Button
+                      key={tag}
+                      type="button"
+                      variant={currentEntry.tags?.includes(tag) ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => toggleTag(tag)}
+                      className="text-xs h-7"
+                    >
+                      {tag}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
               <div className="flex gap-3">
                 <Button onClick={handleSaveEntry} className="bg-gradient-primary flex-1">
                   {editingEntry ? "Update Entry" : "Save Entry"}
@@ -192,7 +341,15 @@ const Journal = () => {
                   onClick={() => {
                     setIsWriting(false);
                     setEditingEntry(null);
-                    setCurrentEntry({ title: "", content: "", mood: "", thoughts: "", gratitude: "" });
+                    setCurrentEntry({ 
+                      title: "", 
+                      content: "", 
+                      mood: "", 
+                      moodRating: 5, 
+                      thoughts: "", 
+                      gratitude: "", 
+                      tags: [] 
+                    });
                   }}
                 >
                   Cancel
@@ -223,11 +380,78 @@ const Journal = () => {
               <p className="text-xs sm:text-sm text-muted-foreground">Reflect on your thoughts and feelings</p>
             </div>
           </div>
-          <Button onClick={() => setIsWriting(true)} className="bg-gradient-primary">
-            <Plus className="h-4 w-4 mr-2" />
-            New Entry
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => setIsWriting(true)} className="bg-gradient-primary">
+              <Plus className="h-4 w-4 mr-2" />
+              New Entry
+            </Button>
+            <Button variant="outline" onClick={exportEntries}>
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
+          </div>
         </div>
+
+        {/* Search and Filter */}
+        {entries.length > 0 && (
+          <Card className="p-4 bg-white/80 backdrop-blur-sm shadow-gentle border-0 mb-4">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search entries..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+              <div className="sm:w-48">
+                <select
+                  value={moodFilter}
+                  onChange={(e) => setMoodFilter(e.target.value)}
+                  className="w-full px-3 py-2 border border-border rounded-md bg-background"
+                >
+                  <option value="">All moods</option>
+                  {[1, 2, 3, 4, 5].map((rating) => (
+                    <option key={rating} value={rating}>
+                      {moodEmojis[rating as keyof typeof moodEmojis].emoji} {moodEmojis[rating as keyof typeof moodEmojis].label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </Card>
+        )}
+
+        {/* Mood Statistics */}
+        {entries.length > 0 && (() => {
+          const stats = getMoodStats();
+          return stats ? (
+            <Card className="p-4 bg-white/80 backdrop-blur-sm shadow-gentle border-0 mb-4">
+              <div className="flex items-center gap-2 mb-3">
+                <BarChart3 className="h-5 w-5 text-primary" />
+                <h3 className="font-semibold">Mood Insights</h3>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-6 gap-2 mb-3">
+                {[1, 2, 3, 4, 5].map((rating) => (
+                  <div key={rating} className="text-center p-2 bg-gray-50 rounded">
+                    <div className="text-lg">{moodEmojis[rating as keyof typeof moodEmojis].emoji}</div>
+                    <div className="text-xs font-medium">{stats.moodCounts[rating] || 0}</div>
+                  </div>
+                ))}
+                <div className="text-center p-2 bg-primary/10 rounded">
+                  <div className="text-sm font-medium text-primary">Avg</div>
+                  <div className="text-xs">{stats.avgMood.toFixed(1)}</div>
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Total entries: {entries.length} • Average mood: {stats.avgMood.toFixed(1)}/5
+              </p>
+            </Card>
+          ) : null;
+        })()}
 
         {entries.length === 0 ? (
           <Card className="p-6 sm:p-8 bg-white/80 backdrop-blur-sm shadow-gentle border-0 text-center">
@@ -242,7 +466,7 @@ const Journal = () => {
           </Card>
         ) : (
           <div className="space-y-4">
-            {entries.map((entry) => (
+            {filteredEntries.map((entry) => (
               <Card key={entry.id} className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
@@ -273,9 +497,17 @@ const Journal = () => {
                 </div>
 
                 {entry.mood && (
-                  <div className="mb-3">
-                    <span className="text-xs font-medium text-muted-foreground">MOOD: </span>
-                    <span className="text-sm">{entry.mood}</span>
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-xs font-medium text-muted-foreground">MOOD:</span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-lg">
+                        {moodEmojis[(entry.moodRating || 3) as keyof typeof moodEmojis]?.emoji}
+                      </span>
+                      <span className="text-sm">{entry.mood}</span>
+                      <Badge variant="outline" className="text-xs">
+                        {entry.moodRating || 3}/5
+                      </Badge>
+                    </div>
                   </div>
                 )}
 
@@ -284,6 +516,18 @@ const Journal = () => {
                     <p className="text-sm text-muted-foreground line-clamp-3">
                       {entry.content}
                     </p>
+                  </div>
+                )}
+
+                {entry.tags && entry.tags.length > 0 && (
+                  <div className="mb-3">
+                    <div className="flex flex-wrap gap-1">
+                      {entry.tags.map((tag, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          #{tag}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
                 )}
 
