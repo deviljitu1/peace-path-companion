@@ -270,7 +270,7 @@ const SymptomsTracker = () => {
   const chartConfig = {
     anxiety: { label: "Anxiety (inverted)", color: "hsl(var(--destructive))" },
     depression: { label: "Mood", color: "hsl(var(--primary))" },
-    sleep: { label: "Sleep", color: "hsl(184 91% 45%)" },
+    sleep: { label: "Sleep", color: "hsla(184, 93%, 42%, 1.00)" },
     energy: { label: "Energy", color: "hsl(35 77% 65%)" },
   };
 
@@ -388,7 +388,7 @@ const SymptomsTracker = () => {
           </Card>
 
           <div className="flex gap-3">
-            <Button onClick={handleSaveEntry} className="bg-gradient-warm flex-1">
+            <Button onClick={handleSaveEntry} className="bg-gradient-calm hover:shadow-glow flex-1">
               Save Entry
             </Button>
             <Button variant="outline" onClick={() => setIsLogging(false)}>
@@ -419,7 +419,7 @@ const SymptomsTracker = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            <Button onClick={() => setIsLogging(true)} className="bg-gradient-warm">
+            <Button onClick={() => setIsLogging(true)} className="bg-gradient-calm hover:shadow-glow">
               <Plus className="h-4 w-4 mr-2" />
               Log Today
             </Button>
@@ -779,7 +779,7 @@ const SymptomsTracker = () => {
             <p className="text-muted-foreground mb-4">
               Monitor your symptoms to identify patterns and track your progress over time.
             </p>
-            <Button onClick={() => setIsLogging(true)} className="bg-gradient-warm">
+            <Button onClick={() => setIsLogging(true)} className="bg-gradient-calm hover:shadow-glow">
               Log Your First Entry
             </Button>
           </Card>

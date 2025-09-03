@@ -381,7 +381,7 @@ const Journal = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            <Button onClick={() => setIsWriting(true)} className="bg-gradient-primary">
+            <Button onClick={() => setIsWriting(true)} className="bg-gradient-calm hover:shadow-glow">
               <Plus className="h-4 w-4 mr-2" />
               New Entry
             </Button>
@@ -460,7 +460,7 @@ const Journal = () => {
             <p className="text-muted-foreground mb-4">
               Begin journaling to track your thoughts, feelings, and personal growth.
             </p>
-            <Button onClick={() => setIsWriting(true)} className="bg-gradient-primary">
+            <Button onClick={() => setIsWriting(true)} className="bg-gradient-calm hover:shadow-glow">
               Write Your First Entry
             </Button>
           </Card>
