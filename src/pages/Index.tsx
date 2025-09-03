@@ -130,7 +130,7 @@ const Index = () => {
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300">
+            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 cursor-pointer" onClick={() => navigate("/chat")}>
               <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
                 <MessageCircle className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
@@ -140,7 +140,7 @@ const Index = () => {
               </p>
             </Card>
 
-            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300">
+            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 cursor-pointer" onClick={() => navigate("/mood")}>
               <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
                 <TrendingUp className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
@@ -150,7 +150,7 @@ const Index = () => {
               </p>
             </Card>
 
-            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 sm:col-span-2 lg:col-span-1">
+            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 sm:col-span-2 lg:col-span-1 cursor-pointer" onClick={() => navigate("/therapy")}>
               <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
                 <Brain className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
@@ -160,7 +160,7 @@ const Index = () => {
               </p>
             </Card>
 
-            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300">
+            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 cursor-pointer" onClick={() => navigate("/chat")}>
               <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
                 <Shield className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
@@ -170,7 +170,7 @@ const Index = () => {
               </p>
             </Card>
 
-            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300">
+            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 cursor-pointer" onClick={() => navigate("/emergency")}>
               <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
                 <Heart className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
