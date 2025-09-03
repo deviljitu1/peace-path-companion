@@ -1,13 +1,18 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, TrendingUp, Plus, Calendar, BarChart3, Download, Bell, AlertCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { ArrowLeft, TrendingUp, Plus, Calendar, BarChart3, Download, Bell, AlertCircle, Search, Filter, LineChart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { LineChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 
 interface SymptomEntry {
   id: string;
@@ -28,6 +33,9 @@ const SymptomsTracker = () => {
   const [entries, setEntries] = useState<SymptomEntry[]>([]);
   const [isLogging, setIsLogging] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month'>('week');
+  const [currentView, setCurrentView] = useState<'overview' | 'history' | 'charts'>('overview');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterSymptom, setFilterSymptom] = useState<string>('all');
   const [currentEntry, setCurrentEntry] = useState<Omit<SymptomEntry, 'id' | 'date'>>({
     anxiety: 5,
     depression: 5,
@@ -222,6 +230,50 @@ const SymptomsTracker = () => {
       .slice(0, 3);
   };
 
+  // Filter and search functions
+  const getFilteredEntries = () => {
+    let filtered = [...entries];
+    
+    // Apply search filter
+    if (searchQuery) {
+      filtered = filtered.filter(entry => 
+        entry.notes.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (entry.triggers && entry.triggers.some(trigger => 
+          trigger.toLowerCase().includes(searchQuery.toLowerCase())
+        ))
+      );
+    }
+    
+    return filtered;
+  };
+
+  // Chart data preparation
+  const getChartData = () => {
+    const sortedEntries = entries
+      .slice()
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .slice(-30); // Last 30 entries
+    
+    return sortedEntries.map(entry => ({
+      date: new Date(entry.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      anxiety: 10 - entry.anxiety, // Invert for display (lower is better)
+      depression: 10 - entry.depression,
+      irritability: 10 - entry.irritability,
+      sleep: entry.sleep,
+      energy: entry.energy,
+      concentration: entry.concentration,
+      appetite: entry.appetite,
+      socialConnection: entry.socialConnection,
+    }));
+  };
+
+  const chartConfig = {
+    anxiety: { label: "Anxiety (inverted)", color: "hsl(var(--destructive))" },
+    depression: { label: "Mood", color: "hsl(var(--primary))" },
+    sleep: { label: "Sleep", color: "hsl(184 91% 45%)" },
+    energy: { label: "Energy", color: "hsl(35 77% 65%)" },
+  };
+
   const exportSymptomData = () => {
     const exportData = {
       entries,
@@ -336,7 +388,7 @@ const SymptomsTracker = () => {
           </Card>
 
           <div className="flex gap-3">
-            <Button onClick={handleSaveEntry} className="bg-gradient-primary flex-1">
+            <Button onClick={handleSaveEntry} className="bg-gradient-warm flex-1">
               Save Entry
             </Button>
             <Button variant="outline" onClick={() => setIsLogging(false)}>
@@ -367,7 +419,7 @@ const SymptomsTracker = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            <Button onClick={() => setIsLogging(true)} className="bg-gradient-primary">
+            <Button onClick={() => setIsLogging(true)} className="bg-gradient-warm">
               <Plus className="h-4 w-4 mr-2" />
               Log Today
             </Button>
@@ -377,87 +429,347 @@ const SymptomsTracker = () => {
           </div>
         </div>
 
-        {/* Wellness Dashboard */}
+        {/* Enhanced Main Content with Tabs */}
         {entries.length > 0 && (
-          <>
-            <Card className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0 mb-4">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5 text-primary" />
-                  <h2 className="font-semibold">Wellness Overview</h2>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant={selectedPeriod === 'week' ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setSelectedPeriod('week')}
-                  >
-                    Week
-                  </Button>
-                  <Button
-                    variant={selectedPeriod === 'month' ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setSelectedPeriod('month')}
-                  >
-                    Month
-                  </Button>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                <div className="text-center p-3 bg-blue-50 rounded-lg">
-                  <div className="text-2xl font-bold text-blue-600">
-                    {getOverallWellness(selectedPeriod === 'week' ? 7 : 30)}%
-                  </div>
-                  <div className="text-sm text-muted-foreground">Overall Wellness</div>
-                </div>
-                <div className="text-center p-3 bg-green-50 rounded-lg">
-                  <div className="text-2xl font-bold text-green-600">
-                    {entries.length}
-                  </div>
-                  <div className="text-sm text-muted-foreground">Total Entries</div>
-                </div>
-              </div>
+          <Tabs value={currentView} onValueChange={(value: string) => setCurrentView(value as 'overview' | 'history' | 'charts')}>
+            <TabsList className="grid w-full grid-cols-3 mb-6">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="history">History</TabsTrigger>
+              <TabsTrigger value="charts">Charts</TabsTrigger>
+            </TabsList>
 
-              <Progress 
-                value={getOverallWellness(selectedPeriod === 'week' ? 7 : 30)} 
-                className="mb-2" 
-              />
-              <p className="text-xs text-muted-foreground">
-                {selectedPeriod === 'week' ? '7-day' : '30-day'} wellness score
-              </p>
-            </Card>
+            {/* Overview Tab */}
+            <TabsContent value="overview" className="space-y-4">
+              <Card className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5 text-primary" />
+                    <h2 className="font-semibold">Wellness Overview</h2>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant={selectedPeriod === 'week' ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setSelectedPeriod('week')}
+                    >
+                      Week
+                    </Button>
+                    <Button
+                      variant={selectedPeriod === 'month' ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setSelectedPeriod('month')}
+                    >
+                      Month
+                    </Button>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                  <div className="text-center p-3 bg-blue-50 rounded-lg">
+                    <div className="text-2xl font-bold text-blue-600">
+                      {getOverallWellness(selectedPeriod === 'week' ? 7 : 30)}%
+                    </div>
+                    <div className="text-sm text-muted-foreground">Overall Wellness</div>
+                  </div>
+                  <div className="text-center p-3 bg-green-50 rounded-lg">
+                    <div className="text-2xl font-bold text-green-600">
+                      {entries.length}
+                    </div>
+                    <div className="text-sm text-muted-foreground">Total Entries</div>
+                  </div>
+                </div>
 
-            {/* Symptoms Needing Attention */}
-            <Card className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0 mb-4">
-              <div className="flex items-center gap-2 mb-3">
-                <AlertCircle className="h-5 w-5 text-amber-500" />
-                <h3 className="font-semibold">Areas Needing Attention</h3>
-              </div>
-              <div className="grid gap-2">
-                {getWorstSymptoms(selectedPeriod === 'week' ? 7 : 30).map((symptom, index) => {
-                  const trend = getTrendAnalysis(symptom.key, selectedPeriod === 'week' ? 7 : 30);
-                  return (
-                    <div key={symptom.key} className="flex items-center justify-between p-2 bg-amber-50 rounded">
-                      <div>
-                        <span className="text-sm font-medium">{symptom.label}</span>
-                        <div className="text-xs text-muted-foreground">
-                          Score: {symptom.avgScore.toFixed(1)}/10
+                <Progress 
+                  value={getOverallWellness(selectedPeriod === 'week' ? 7 : 30)} 
+                  className="mb-2" 
+                />
+                <p className="text-xs text-muted-foreground">
+                  {selectedPeriod === 'week' ? '7-day' : '30-day'} wellness score
+                </p>
+              </Card>
+
+              {/* Areas Needing Attention */}
+              <Card className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0">
+                <div className="flex items-center gap-2 mb-3">
+                  <AlertCircle className="h-5 w-5 text-amber-500" />
+                  <h3 className="font-semibold">Areas Needing Attention</h3>
+                </div>
+                <div className="grid gap-2">
+                  {getWorstSymptoms(selectedPeriod === 'week' ? 7 : 30).map((symptom, index) => {
+                    const trend = getTrendAnalysis(symptom.key, selectedPeriod === 'week' ? 7 : 30);
+                    return (
+                      <div key={symptom.key} className="flex items-center justify-between p-2 bg-amber-50 rounded">
+                        <div>
+                          <span className="text-sm font-medium">{symptom.label}</span>
+                          <div className="text-xs text-muted-foreground">
+                            Score: {symptom.avgScore.toFixed(1)}/10
+                          </div>
+                        </div>
+                        <Badge 
+                          variant={trend.trend === 'improving' ? 'default' : trend.trend === 'worsening' ? 'destructive' : 'outline'}
+                          className="text-xs"
+                        >
+                          {trend.trend === 'improving' ? '↑' : trend.trend === 'worsening' ? '↓' : '→'} 
+                          {trend.change.toFixed(0)}%
+                        </Badge>
+                      </div>
+                    );
+                  })}
+                </div>
+              </Card>
+
+              {/* Recent Entries Preview */}
+              <Card className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold">Recent Entries</h3>
+                  <Button variant="outline" size="sm" onClick={() => setCurrentView('history')}>
+                    View All
+                  </Button>
+                </div>
+                <div className="space-y-3">
+                  {entries.slice(0, 3).map((entry) => (
+                    <div key={entry.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <Calendar className="h-4 w-4 text-primary" />
+                        <div>
+                          <div className="font-medium text-sm">{formatDate(entry.date)}</div>
+                          <div className="text-xs text-muted-foreground">
+                            Avg: {getAverageScore(entry)}/10
+                          </div>
                         </div>
                       </div>
-                      <Badge 
-                        variant={trend.trend === 'improving' ? 'default' : trend.trend === 'worsening' ? 'destructive' : 'outline'}
-                        className="text-xs"
-                      >
-                        {trend.trend === 'improving' ? '↑' : trend.trend === 'worsening' ? '↓' : '→'} 
-                        {trend.change.toFixed(0)}%
+                      <Badge className={`text-xs ${getScoreColor(getAverageScore(entry))}`}>
+                        {getAverageScore(entry)}/10
                       </Badge>
                     </div>
-                  );
-                })}
+                  ))}
+                </div>
+              </Card>
+            </TabsContent>
+
+            {/* History Tab */}
+            <TabsContent value="history" className="space-y-4">
+              <Card className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0">
+                <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search notes and triggers..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-9"
+                    />
+                  </div>
+                  <Select value={filterSymptom} onValueChange={setFilterSymptom}>
+                    <SelectTrigger className="sm:w-48">
+                      <Filter className="h-4 w-4 mr-2" />
+                      <SelectValue placeholder="Filter by symptom" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Symptoms</SelectItem>
+                      {symptoms.map((symptom) => (
+                        <SelectItem key={symptom.key} value={symptom.key}>
+                          {symptom.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </Card>
+
+              <div className="space-y-4">
+                {getFilteredEntries().map((entry) => (
+                  <Card key={entry.id} className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <Calendar className="h-5 w-5 text-primary flex-shrink-0" />
+                        <div>
+                          <h3 className="font-semibold text-sm sm:text-base">
+                            {formatDate(entry.date)}
+                          </h3>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-xs text-muted-foreground">Overall:</span>
+                            <Badge className={`text-xs ${getScoreColor(getAverageScore(entry))}`}>
+                              {getAverageScore(entry)}/10
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Detailed symptom breakdown */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                      {symptoms.map((symptom) => (
+                        <div key={symptom.key} className="text-center p-2 bg-gray-50 rounded">
+                          <div className="text-xs text-muted-foreground">{symptom.label}</div>
+                          <div className="font-semibold text-sm">
+                            {entry[symptom.key as keyof SymptomEntry]}/10
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {entry.triggers && entry.triggers.length > 0 && (
+                      <div className="mb-3">
+                        <span className="text-xs font-medium text-muted-foreground">TRIGGERS: </span>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {entry.triggers.map((trigger, index) => (
+                            <Badge key={index} variant="outline" className="text-xs">
+                              {trigger}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {entry.notes && (
+                      <div className="p-3 bg-blue-50 rounded-lg">
+                        <p className="text-sm text-blue-800">{entry.notes}</p>
+                      </div>
+                    )}
+                  </Card>
+                ))}
+
+                {getFilteredEntries().length === 0 && (
+                  <Card className="p-8 bg-white/80 backdrop-blur-sm shadow-gentle border-0 text-center">
+                    <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="font-semibold mb-2">No entries found</h3>
+                    <p className="text-muted-foreground">
+                      Try adjusting your search or filter criteria.
+                    </p>
+                  </Card>
+                )}
               </div>
-            </Card>
-          </>
+            </TabsContent>
+
+            {/* Charts Tab */}
+            <TabsContent value="charts" className="space-y-4">
+              <Card className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0">
+                <CardHeader className="px-0 pt-0">
+                  <CardTitle className="flex items-center gap-2">
+                    <LineChart className="h-5 w-5" />
+                    Symptom Trends
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="px-0 pb-0">
+                  <ChartContainer config={chartConfig} className="h-80 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RechartsLineChart data={getChartData()}>
+                        <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                        <XAxis 
+                          dataKey="date" 
+                          className="fill-muted-foreground text-xs"
+                          tick={{ fontSize: 12 }}
+                        />
+                        <YAxis 
+                          domain={[0, 10]} 
+                          className="fill-muted-foreground text-xs"
+                          tick={{ fontSize: 12 }}
+                        />
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <Line 
+                          type="monotone" 
+                          dataKey="anxiety" 
+                          stroke="hsl(var(--destructive))" 
+                          strokeWidth={2}
+                          dot={{ r: 4 }}
+                          name="Anxiety (Lower is better)"
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="depression" 
+                          stroke="hsl(var(--primary))" 
+                          strokeWidth={2}
+                          dot={{ r: 4 }}
+                          name="Mood (Higher is better)"
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="sleep" 
+                          stroke="hsl(184 91% 45%)" 
+                          strokeWidth={2}
+                          dot={{ r: 4 }}
+                          name="Sleep Quality"
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="energy" 
+                          stroke="hsl(35 77% 65%)" 
+                          strokeWidth={2}
+                          dot={{ r: 4 }}
+                          name="Energy Level"
+                        />
+                      </RechartsLineChart>
+                    </ResponsiveContainer>
+                  </ChartContainer>
+                  <div className="flex flex-wrap gap-4 mt-4 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-0.5 bg-destructive"></div>
+                      <span>Anxiety (inverted - lower is better)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-0.5 bg-primary"></div>
+                      <span>Mood</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-0.5" style={{ backgroundColor: "hsl(184 91% 45%)" }}></div>
+                      <span>Sleep</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-0.5" style={{ backgroundColor: "hsl(35 77% 65%)" }}></div>
+                      <span>Energy</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Chart Stats */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Card className="p-4 bg-white/80 backdrop-blur-sm shadow-gentle border-0">
+                  <CardHeader className="px-0 pt-0 pb-3">
+                    <CardTitle className="text-base">Best Performing</CardTitle>
+                  </CardHeader>
+                  <div className="space-y-2">
+                    {symptoms.slice(0, 3).map((symptom) => {
+                      const recent = entries.slice(0, 7);
+                      const avg = recent.reduce((sum, entry) => sum + (entry[symptom.key as keyof SymptomEntry] as number), 0) / recent.length;
+                      return (
+                        <div key={symptom.key} className="flex justify-between items-center p-2 bg-green-50 rounded">
+                          <span className="text-sm font-medium">{symptom.label}</span>
+                          <Badge className="bg-green-100 text-green-800">
+                            {avg.toFixed(1)}/10
+                          </Badge>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </Card>
+
+                <Card className="p-4 bg-white/80 backdrop-blur-sm shadow-gentle border-0">
+                  <CardHeader className="px-0 pt-0 pb-3">
+                    <CardTitle className="text-base">Recent Trends</CardTitle>
+                  </CardHeader>
+                  <div className="space-y-2">
+                    {symptoms.slice(0, 3).map((symptom) => {
+                      const trend = getTrendAnalysis(symptom.key, 7);
+                      return (
+                        <div key={symptom.key} className="flex justify-between items-center p-2 bg-blue-50 rounded">
+                          <span className="text-sm font-medium">{symptom.label}</span>
+                          <Badge 
+                            variant={trend.trend === 'improving' ? 'default' : trend.trend === 'worsening' ? 'destructive' : 'outline'}
+                            className="text-xs"
+                          >
+                            {trend.trend === 'improving' ? '↑' : trend.trend === 'worsening' ? '↓' : '→'} 
+                            {trend.change.toFixed(0)}%
+                          </Badge>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </Card>
+              </div>
+            </TabsContent>
+          </Tabs>
         )}
 
         {entries.length === 0 ? (
@@ -467,73 +779,11 @@ const SymptomsTracker = () => {
             <p className="text-muted-foreground mb-4">
               Monitor your symptoms to identify patterns and track your progress over time.
             </p>
-            <Button onClick={() => setIsLogging(true)} className="bg-gradient-primary">
+            <Button onClick={() => setIsLogging(true)} className="bg-gradient-warm">
               Log Your First Entry
             </Button>
           </Card>
-        ) : (
-          <div className="space-y-4">
-            {entries.slice(0, 10).map((entry) => (
-              <Card key={entry.id} className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <Calendar className="h-5 w-5 text-primary flex-shrink-0" />
-                    <div>
-                      <h3 className="font-semibold text-sm sm:text-base">
-                        {formatDate(entry.date)}
-                      </h3>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-muted-foreground">Overall:</span>
-                        <Badge className={`text-xs ${getScoreColor(getAverageScore(entry))}`}>
-                          {getAverageScore(entry)}/10
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Quick symptom overview */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
-                  <div className="text-center p-2 bg-gray-50 rounded">
-                    <div className="text-xs text-muted-foreground">Anxiety</div>
-                    <div className="font-semibold">{entry.anxiety}/10</div>
-                  </div>
-                  <div className="text-center p-2 bg-gray-50 rounded">
-                    <div className="text-xs text-muted-foreground">Mood</div>
-                    <div className="font-semibold">{entry.depression}/10</div>
-                  </div>
-                  <div className="text-center p-2 bg-gray-50 rounded">
-                    <div className="text-xs text-muted-foreground">Energy</div>
-                    <div className="font-semibold">{entry.energy}/10</div>
-                  </div>
-                  <div className="text-center p-2 bg-gray-50 rounded">
-                    <div className="text-xs text-muted-foreground">Sleep</div>
-                    <div className="font-semibold">{entry.sleep}/10</div>
-                  </div>
-                </div>
-
-                {entry.triggers && entry.triggers.length > 0 && (
-                  <div className="mb-3">
-                    <span className="text-xs font-medium text-muted-foreground">TRIGGERS: </span>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {entry.triggers.map((trigger, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {trigger}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {entry.notes && (
-                  <div className="p-2 bg-blue-50 rounded-lg">
-                    <p className="text-sm text-blue-800">{entry.notes}</p>
-                  </div>
-                )}
-              </Card>
-            ))}
-          </div>
-        )}
+        ) : null}
 
         <Card className="mt-6 p-4 sm:p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0">
           <div className="text-center">
