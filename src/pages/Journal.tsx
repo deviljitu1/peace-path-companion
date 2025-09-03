@@ -333,7 +333,7 @@ const Journal = () => {
               </div>
 
               <div className="flex gap-3">
-                <Button onClick={handleSaveEntry} className="bg-gradient-primary flex-1">
+                <Button onClick={handleSaveEntry} className="bg-gradient-calm hover:shadow-glow flex-1">
                   {editingEntry ? "Update Entry" : "Save Entry"}
                 </Button>
                 <Button 
