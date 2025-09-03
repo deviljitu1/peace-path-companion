@@ -14,6 +14,8 @@ import MedicationTracker from "./pages/MedicationTracker";
 import SymptomsTracker from "./pages/SymptomsTracker";
 import NotFound from "./pages/NotFound";
 import MentalHealthQuiz from "./components/MentalHealthQuiz";
+import Assessments from "./pages/Assessments";
+import TestRunner from "./components/TestRunner";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +35,8 @@ const App = () => (
         <Route path="/medication" element={<MedicationTracker />} />
         <Route path="/symptoms" element={<SymptomsTracker />} />
         <Route path="/MentalHealthQuiz" element={<MentalHealthQuiz />} />
+        <Route path="/assessments" element={<Assessments />} />
+        <Route path="/test/:testId" element={<TestRunner />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

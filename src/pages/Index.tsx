@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { MessageCircle, TrendingUp, Heart, Brain, Shield, Users, Menu, X, BookOpen, Pill, AlertTriangle } from "lucide-react";
+import { MessageCircle, TrendingUp, Heart, Brain, Shield, Users, Menu, X, BookOpen, Pill, AlertTriangle, ClipboardList } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import heroImage from "@/assets/hero-image.jpg";
@@ -230,7 +230,17 @@ const Index = () => {
               </p>
             </Card>
 
-            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300">
+            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 cursor-pointer" onClick={() => navigate("/assessments")}>
+              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
+                <ClipboardList className="h-5 w-5 md:h-6 md:w-6 text-white" />
+              </div>
+              <h3 className="text-lg md:text-xl font-semibold mb-3">Mental Health Tests</h3>
+              <p className="text-sm md:text-base text-muted-foreground">
+                Take comprehensive psychological assessments including personality tests, depression screening, and anxiety evaluations.
+              </p>
+            </Card>
+
+            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 cursor-pointer" onClick={() => navigate("/chat")}>
               <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
                 <Users className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
