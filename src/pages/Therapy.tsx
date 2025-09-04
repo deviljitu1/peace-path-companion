@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, Heart, Brain, Wind, Volume2, BookOpen, Sunrise } from "lucide-react";
+import { ArrowLeft, Heart, Brain, Wind, Volume2, BookOpen, Sunrise, BarChart3 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { BreathingExercise } from "@/components/therapy/BreathingExercise";
 import { MeditationTimer } from "@/components/therapy/MeditationTimer"; // Fixed this line
@@ -9,6 +9,7 @@ import { GroundingTechnique } from "@/components/therapy/GroundingTechnique";
 import { CalmingSounds } from "@/components/therapy/CalmingSounds";
 import { Affirmations } from "@/components/therapy/Affirmations";
 import { ProgressiveRelaxation } from "@/components/therapy/ProgressiveRelaxation";
+import { SessionHistory } from "@/components/therapy/SessionHistory";
 
 const therapyTools = [
   {
@@ -78,6 +79,8 @@ const Therapy = () => {
         return <Affirmations onBack={() => setSelectedTool(null)} />;
       case "relaxation":
         return <ProgressiveRelaxation onBack={() => setSelectedTool(null)} />;
+      case "history":
+        return <SessionHistory onClose={() => setSelectedTool(null)} />;
       default:
         return null;
     }
@@ -107,40 +110,60 @@ const Therapy = () => {
           </div>
         </div>
 
-        <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {therapyTools.map((tool) => (
-            <Card 
-              key={tool.id}
-              className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0 cursor-pointer transition-all hover:shadow-md hover:scale-105"
-              onClick={() => setSelectedTool(tool.id)}
-            >
-              <div className="flex flex-col items-center text-center space-y-3 sm:space-y-4">
-                <div className={`p-3 sm:p-4 rounded-full ${tool.color} transition-colors`}>
-                  <tool.icon className="h-6 w-6 sm:h-8 sm:w-8 text-gray-700" />
+          <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            {therapyTools.map((tool) => (
+              <Card 
+                key={tool.id}
+                className="group p-4 sm:p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0 cursor-pointer transition-all hover:shadow-glow hover:bg-white/90 hover:scale-[1.02] active:scale-[0.98]"
+                onClick={() => setSelectedTool(tool.id)}
+              >
+                <div className="flex flex-col items-center text-center space-y-3 sm:space-y-4">
+                  <div className={`p-3 sm:p-4 rounded-full ${tool.color} transition-all duration-300 group-hover:shadow-glow`}>
+                    <tool.icon className="h-6 w-6 sm:h-8 sm:w-8 text-gray-700 group-hover:text-white transition-colors" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm sm:text-base font-semibold mb-1 sm:mb-2 group-hover:text-primary transition-colors">{tool.title}</h3>
+                    <p className="text-xs sm:text-sm text-muted-foreground leading-tight group-hover:text-foreground transition-colors">{tool.description}</p>
+                  </div>
+                  <Button 
+                    size="sm"
+                    className="bg-gradient-calm hover:shadow-glow text-xs sm:text-sm opacity-80 group-hover:opacity-100 transition-opacity"
+                  >
+                    Start Session
+                  </Button>
                 </div>
-                <div>
-                  <h3 className="text-sm sm:text-base font-semibold mb-1 sm:mb-2">{tool.title}</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground leading-tight">{tool.description}</p>
-                </div>
-                <Button 
-                  size="sm"
-                  className="bg-gradient-calm hover:shadow-glow text-xs sm:text-sm"
-                >
-                  Start Session
-                </Button>
-              </div>
-            </Card>
-          ))}
-        </div>
-
-        <Card className="mt-6 p-4 sm:p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0">
-          <div className="text-center">
-            <h2 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">💡 Quick Tip</h2>
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              Take just 5 minutes for yourself today. Even small moments of mindfulness can make a big difference in your mental well-being.
-            </p>
+              </Card>
+            ))}
           </div>
-        </Card>
+
+          <Card className="mt-6 p-4 sm:p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0">
+            <div className="text-center">
+              <h2 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">💡 Quick Tip</h2>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Take just 5 minutes for yourself today. Even small moments of mindfulness can make a big difference in your mental well-being.
+              </p>
+            </div>
+          </Card>
+
+          <Card className="mt-4 p-4 sm:p-6 bg-white/80 backdrop-blur-sm shadow-gentle border-0">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm sm:text-base font-semibold mb-1">Track Your Progress</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  View your session history and wellness insights
+                </p>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setSelectedTool("history")}
+                className="text-xs sm:text-sm"
+              >
+                <BarChart3 className="h-4 w-4 mr-2" />
+                View History
+              </Button>
+            </div>
+          </Card>
       </div>
     </div>
   );

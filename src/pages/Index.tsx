@@ -130,122 +130,122 @@ const Index = () => {
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 cursor-pointer" onClick={() => navigate("/chat")}>
-              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
+            <Card className="group p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow hover:bg-white/90 hover:scale-[1.02] transition-all duration-300 cursor-pointer active:scale-[0.98]" onClick={() => navigate("/chat")}>
+              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4 group-hover:shadow-glow transition-all duration-300">
                 <MessageCircle className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
-              <h3 className="text-lg md:text-xl font-semibold mb-3">24/7 AI Support</h3>
-              <p className="text-sm md:text-base text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-semibold mb-3 group-hover:text-primary transition-colors">24/7 AI Support</h3>
+              <p className="text-sm md:text-base text-muted-foreground group-hover:text-foreground transition-colors">
                 Chat with CalmMind anytime. Get empathetic responses, coping strategies, and gentle guidance whenever you need it.
               </p>
             </Card>
 
-            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 cursor-pointer" onClick={() => navigate("/mood")}>
-              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
+            <Card className="group p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow hover:bg-white/90 hover:scale-[1.02] transition-all duration-300 cursor-pointer active:scale-[0.98]" onClick={() => navigate("/mood")}>
+              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4 group-hover:shadow-glow transition-all duration-300">
                 <TrendingUp className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
-              <h3 className="text-lg md:text-xl font-semibold mb-3">Mood Tracking</h3>
-              <p className="text-sm md:text-base text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-semibold mb-3 group-hover:text-primary transition-colors">Mood Tracking</h3>
+              <p className="text-sm md:text-base text-muted-foreground group-hover:text-foreground transition-colors">
                 Monitor your emotional patterns over time. Understand your triggers and celebrate your progress.
               </p>
             </Card>
 
-            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 sm:col-span-2 lg:col-span-1 cursor-pointer" onClick={() => navigate("/therapy")}>
-              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
+            <Card className="group p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow hover:bg-white/90 hover:scale-[1.02] transition-all duration-300 sm:col-span-2 lg:col-span-1 cursor-pointer active:scale-[0.98]" onClick={() => navigate("/therapy")}>
+              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4 group-hover:shadow-glow transition-all duration-300">
                 <Brain className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
-              <h3 className="text-lg md:text-xl font-semibold mb-3">Coping Strategies</h3>
-              <p className="text-sm md:text-base text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-semibold mb-3 group-hover:text-primary transition-colors">Coping Strategies</h3>
+              <p className="text-sm md:text-base text-muted-foreground group-hover:text-foreground transition-colors">
                 Learn personalized techniques for managing anxiety, stress, and difficult emotions through guided exercises.
               </p>
             </Card>
 
-            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 cursor-pointer" onClick={() => navigate("/chat")}>
-              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
+            <Card className="group p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow hover:bg-white/90 hover:scale-[1.02] transition-all duration-300 cursor-pointer active:scale-[0.98]" onClick={() => navigate("/chat")}>
+              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4 group-hover:shadow-glow transition-all duration-300">
                 <Shield className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
-              <h3 className="text-lg md:text-xl font-semibold mb-3">Safe & Private</h3>
-              <p className="text-sm md:text-base text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-semibold mb-3 group-hover:text-primary transition-colors">Safe & Private</h3>
+              <p className="text-sm md:text-base text-muted-foreground group-hover:text-foreground transition-colors">
                 Your conversations and data are completely confidential. Share openly in a judgment-free environment.
               </p>
             </Card>
 
-            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 cursor-pointer" onClick={() => navigate("/emergency")}>
-              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
+            <Card className="group p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow hover:bg-white/90 hover:scale-[1.02] transition-all duration-300 cursor-pointer active:scale-[0.98]" onClick={() => navigate("/emergency")}>
+              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4 group-hover:shadow-glow transition-all duration-300">
                 <Heart className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
-              <h3 className="text-lg md:text-xl font-semibold mb-3">Crisis Support</h3>
-              <p className="text-sm md:text-base text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-semibold mb-3 group-hover:text-primary transition-colors">Crisis Support</h3>
+              <p className="text-sm md:text-base text-muted-foreground group-hover:text-foreground transition-colors">
                 Immediate access to crisis resources and hotlines when you need urgent support. You're never alone.
               </p>
             </Card>
 
-            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 cursor-pointer" onClick={() => navigate("/therapy")}>
-              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
+            <Card className="group p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow hover:bg-white/90 hover:scale-[1.02] transition-all duration-300 cursor-pointer active:scale-[0.98]" onClick={() => navigate("/therapy")}>
+              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4 group-hover:shadow-glow transition-all duration-300">
                 <Brain className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
-              <h3 className="text-lg md:text-xl font-semibold mb-3">Therapy & Wellness</h3>
-              <p className="text-sm md:text-base text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-semibold mb-3 group-hover:text-primary transition-colors">Therapy & Wellness</h3>
+              <p className="text-sm md:text-base text-muted-foreground group-hover:text-foreground transition-colors">
                 Guided breathing, meditation, grounding techniques, and calming exercises for your mental wellness.
               </p>
             </Card>
 
-            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 cursor-pointer" onClick={() => navigate("/crisis-support")}>
-              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
+            <Card className="group p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow hover:bg-white/90 hover:scale-[1.02] transition-all duration-300 cursor-pointer active:scale-[0.98]" onClick={() => navigate("/crisis-support")}>
+              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4 group-hover:shadow-glow transition-all duration-300">
                 <Shield className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
-              <h3 className="text-lg md:text-xl font-semibold mb-3">Safety Plan</h3>
-              <p className="text-sm md:text-base text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-semibold mb-3 group-hover:text-primary transition-colors">Safety Plan</h3>
+              <p className="text-sm md:text-base text-muted-foreground group-hover:text-foreground transition-colors">
                 Create a personalized crisis support plan with coping strategies and emergency contacts.
               </p>
             </Card>
 
-            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 cursor-pointer" onClick={() => navigate("/journal")}>
-              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
+            <Card className="group p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow hover:bg-white/90 hover:scale-[1.02] transition-all duration-300 cursor-pointer active:scale-[0.98]" onClick={() => navigate("/journal")}>
+              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4 group-hover:shadow-glow transition-all duration-300">
                 <BookOpen className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
-              <h3 className="text-lg md:text-xl font-semibold mb-3">Daily Journal</h3>
-              <p className="text-sm md:text-base text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-semibold mb-3 group-hover:text-primary transition-colors">Daily Journal</h3>
+              <p className="text-sm md:text-base text-muted-foreground group-hover:text-foreground transition-colors">
                 Reflect on your thoughts and feelings to promote self-awareness and emotional processing.
               </p>
             </Card>
 
-            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 cursor-pointer" onClick={() => navigate("/medication")}>
-              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
+            <Card className="group p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow hover:bg-white/90 hover:scale-[1.02] transition-all duration-300 cursor-pointer active:scale-[0.98]" onClick={() => navigate("/medication")}>
+              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4 group-hover:shadow-glow transition-all duration-300">
                 <Pill className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
-              <h3 className="text-lg md:text-xl font-semibold mb-3">Medication Tracker</h3>
-              <p className="text-sm md:text-base text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-semibold mb-3 group-hover:text-primary transition-colors">Medication Tracker</h3>
+              <p className="text-sm md:text-base text-muted-foreground group-hover:text-foreground transition-colors">
                 Track your medications, monitor adherence, and note effects to support your treatment.
               </p>
             </Card>
 
-            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 cursor-pointer" onClick={() => navigate("/symptoms")}>
-              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
+            <Card className="group p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow hover:bg-white/90 hover:scale-[1.02] transition-all duration-300 cursor-pointer active:scale-[0.98]" onClick={() => navigate("/symptoms")}>
+              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4 group-hover:shadow-glow transition-all duration-300">
                 <TrendingUp className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
-              <h3 className="text-lg md:text-xl font-semibold mb-3">Symptoms Tracker</h3>
-              <p className="text-sm md:text-base text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-semibold mb-3 group-hover:text-primary transition-colors">Symptoms Tracker</h3>
+              <p className="text-sm md:text-base text-muted-foreground group-hover:text-foreground transition-colors">
                 Monitor anxiety, mood, and other symptoms to identify patterns and track progress.
               </p>
             </Card>
 
-            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 cursor-pointer" onClick={() => navigate("/assessments")}>
-              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
+            <Card className="group p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow hover:bg-white/90 hover:scale-[1.02] transition-all duration-300 cursor-pointer active:scale-[0.98]" onClick={() => navigate("/assessments")}>
+              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4 group-hover:shadow-glow transition-all duration-300">
                 <ClipboardList className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
-              <h3 className="text-lg md:text-xl font-semibold mb-3">Mental Health Tests</h3>
-              <p className="text-sm md:text-base text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-semibold mb-3 group-hover:text-primary transition-colors">Mental Health Tests</h3>
+              <p className="text-sm md:text-base text-muted-foreground group-hover:text-foreground transition-colors">
                 Take comprehensive psychological assessments including personality tests, depression screening, and anxiety evaluations.
               </p>
             </Card>
 
-            <Card className="p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow transition-all duration-300 cursor-pointer" onClick={() => navigate("/chat")}>
-              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4">
+            <Card className="group p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow hover:bg-white/90 hover:scale-[1.02] transition-all duration-300 cursor-pointer active:scale-[0.98]" onClick={() => navigate("/chat")}>
+              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4 group-hover:shadow-glow transition-all duration-300">
                 <Users className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
-              <h3 className="text-lg md:text-xl font-semibold mb-3">Professional Bridge</h3>
-              <p className="text-sm md:text-base text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-semibold mb-3 group-hover:text-primary transition-colors">Professional Bridge</h3>
+              <p className="text-sm md:text-base text-muted-foreground group-hover:text-foreground transition-colors">
                 Get recommendations for professional help and resources when needed. We complement, not replace, professional care.
               </p>
             </Card>

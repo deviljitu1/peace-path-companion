@@ -560,14 +560,14 @@ const Chat = () => {
                   <TrendingUp className="h-3 w-3 mr-1" />
                   Track mood
                 </Button>
-                                <Button 
+                <Button 
                   variant="outline" 
                   size="sm" 
                   onClick={() => navigate("/MentalHealthQuiz")}
                   className="text-xs h-7 sm:h-8 rounded-full border-purple-300 text-purple-700 px-2 sm:px-3"
                 >
                   <TrendingUp className="h-3 w-3 mr-1" />
-                  Quize to Check Mental Health
+                  Mental Health Test
                 </Button>
               </div>
             </div>
@@ -580,12 +580,12 @@ const Chat = () => {
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
-                className="flex-1 bg-white border-gray-300 focus:border-blue-500 rounded-full text-sm"
+                className="flex-1 bg-white border-gray-300 focus:border-blue-500 rounded-full text-sm sm:text-base"
                 disabled={isLoading}
               />
               <Button 
                 onClick={handleSendMessage} 
-                className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 rounded-full w-10 h-10 sm:w-auto sm:px-4 flex-shrink-0"
+                className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 rounded-full w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0"
                 disabled={isLoading || !newMessage.trim()}
               >
                 {isLoading ? (

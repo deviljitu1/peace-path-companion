@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, Play, Pause, RotateCcw } from "lucide-react";
+import { saveTherapySession } from "@/lib/therapyUtils";
 
 interface BreathingExerciseProps {
   onBack: () => void;
@@ -12,6 +13,7 @@ export const BreathingExercise = ({ onBack }: BreathingExerciseProps) => {
   const [phase, setPhase] = useState<"inhale" | "hold" | "exhale">("inhale");
   const [timeLeft, setTimeLeft] = useState(4);
   const [cycle, setCycle] = useState(0);
+  const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
 
   const phases = {
     inhale: { duration: 4, next: "hold", text: "Breathe In", color: "bg-blue-400" },
@@ -42,6 +44,9 @@ export const BreathingExercise = ({ onBack }: BreathingExerciseProps) => {
   }, [isActive, timeLeft, phase, cycle]);
 
   const toggleExercise = () => {
+    if (!isActive && !sessionStartTime) {
+      setSessionStartTime(new Date());
+    }
     setIsActive(!isActive);
   };
 
@@ -52,6 +57,16 @@ export const BreathingExercise = ({ onBack }: BreathingExerciseProps) => {
     setCycle(0);
   };
 
+  const handleBackWithSave = () => {
+    if (sessionStartTime) {
+      const duration = Math.floor((new Date().getTime() - sessionStartTime.getTime()) / 1000 / 60);
+      if (duration > 0) {
+        saveTherapySession('breathing', duration, cycle, undefined, `Completed ${cycle} breathing cycles`);
+      }
+    }
+    onBack();
+  };
+
   const currentPhase = phases[phase];
   const progress = ((currentPhase.duration - timeLeft) / currentPhase.duration) * 100;
 
@@ -59,7 +74,7 @@ export const BreathingExercise = ({ onBack }: BreathingExerciseProps) => {
     <div className="min-h-screen bg-gradient-peaceful">
       <div className="container mx-auto px-3 sm:px-6 py-3 sm:py-6 max-w-2xl">
         <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
-          <Button variant="ghost" size="icon" onClick={onBack} className="hover:bg-white/20 h-8 w-8 sm:h-10 sm:w-10">
+          <Button variant="ghost" size="icon" onClick={handleBackWithSave} className="hover:bg-white/20 h-8 w-8 sm:h-10 sm:w-10">
             <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
           </Button>
           <h1 className="text-base sm:text-xl font-semibold text-foreground">Breathing Exercise</h1>
