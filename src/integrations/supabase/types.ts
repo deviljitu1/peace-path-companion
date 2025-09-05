@@ -14,6 +14,97 @@ export type Database = {
   }
   public: {
     Tables: {
+      anonymous_chat_messages: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          participant_id: string
+          room_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          participant_id: string
+          room_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          participant_id?: string
+          room_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "anonymous_chat_messages_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "anonymous_chat_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      anonymous_chat_participants: {
+        Row: {
+          id: string
+          joined_at: string
+          last_seen: string
+          participant_id: string
+          room_id: string
+          session_id: string
+        }
+        Insert: {
+          id?: string
+          joined_at?: string
+          last_seen?: string
+          participant_id: string
+          room_id: string
+          session_id: string
+        }
+        Update: {
+          id?: string
+          joined_at?: string
+          last_seen?: string
+          participant_id?: string
+          room_id?: string
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "anonymous_chat_participants_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "anonymous_chat_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      anonymous_chat_rooms: {
+        Row: {
+          created_at: string
+          id: string
+          participant_count: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          participant_count?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          participant_count?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       chat_messages: {
         Row: {
           content: string

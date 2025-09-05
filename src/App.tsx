@@ -16,6 +16,7 @@ import NotFound from "./pages/NotFound";
 import MentalHealthQuiz from "./components/MentalHealthQuiz";
 import Assessments from "./pages/Assessments";
 import TestRunner from "./components/TestRunner";
+import AnonymousChat from "./pages/AnonymousChat";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
         <Route path="/MentalHealthQuiz" element={<MentalHealthQuiz />} />
         <Route path="/assessments" element={<Assessments />} />
         <Route path="/test/:testId" element={<TestRunner />} />
+        <Route path="/anonymous-chat" element={<AnonymousChat />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

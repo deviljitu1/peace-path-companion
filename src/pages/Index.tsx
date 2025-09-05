@@ -240,6 +240,16 @@ const Index = () => {
               </p>
             </Card>
 
+            <Card className="group p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow hover:bg-white/90 hover:scale-[1.02] transition-all duration-300 cursor-pointer active:scale-[0.98]" onClick={() => navigate("/anonymous-chat")}>
+              <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4 group-hover:shadow-glow transition-all duration-300">
+                <Users className="h-5 w-5 md:h-6 md:w-6 text-white" />
+              </div>
+              <h3 className="text-lg md:text-xl font-semibold mb-3 group-hover:text-primary transition-colors">Anonymous Chat</h3>
+              <p className="text-sm md:text-base text-muted-foreground group-hover:text-foreground transition-colors">
+                Connect with random people anonymously for peer support and meaningful conversations in a safe space.
+              </p>
+            </Card>
+
             <Card className="group p-4 md:p-6 bg-white/80 backdrop-blur-sm shadow-card-custom border-0 hover:shadow-glow hover:bg-white/90 hover:scale-[1.02] transition-all duration-300 cursor-pointer active:scale-[0.98]" onClick={() => navigate("/chat")}>
               <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4 group-hover:shadow-glow transition-all duration-300">
                 <Users className="h-5 w-5 md:h-6 md:w-6 text-white" />
