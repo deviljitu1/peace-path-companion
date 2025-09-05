@@ -14,25 +14,78 @@ export type Database = {
   }
   public: {
     Tables: {
+      anonymous_chat_connections: {
+        Row: {
+          connection_count: number | null
+          created_at: string
+          id: string
+          is_favorite: boolean | null
+          last_connected: string
+          room_id: string
+          user1_device_id: string
+          user2_device_id: string
+        }
+        Insert: {
+          connection_count?: number | null
+          created_at?: string
+          id?: string
+          is_favorite?: boolean | null
+          last_connected?: string
+          room_id: string
+          user1_device_id: string
+          user2_device_id: string
+        }
+        Update: {
+          connection_count?: number | null
+          created_at?: string
+          id?: string
+          is_favorite?: boolean | null
+          last_connected?: string
+          room_id?: string
+          user1_device_id?: string
+          user2_device_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "anonymous_chat_connections_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "anonymous_chat_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       anonymous_chat_messages: {
         Row: {
           created_at: string
+          file_name: string | null
+          file_size: number | null
+          file_url: string | null
           id: string
           message: string
+          message_type: string | null
           participant_id: string
           room_id: string
         }
         Insert: {
           created_at?: string
+          file_name?: string | null
+          file_size?: number | null
+          file_url?: string | null
           id?: string
           message: string
+          message_type?: string | null
           participant_id: string
           room_id: string
         }
         Update: {
           created_at?: string
+          file_name?: string | null
+          file_size?: number | null
+          file_url?: string | null
           id?: string
           message?: string
+          message_type?: string | null
           participant_id?: string
           room_id?: string
         }
@@ -48,7 +101,9 @@ export type Database = {
       }
       anonymous_chat_participants: {
         Row: {
+          device_id: string | null
           id: string
+          is_online: boolean | null
           joined_at: string
           last_seen: string
           participant_id: string
@@ -56,7 +111,9 @@ export type Database = {
           session_id: string
         }
         Insert: {
+          device_id?: string | null
           id?: string
+          is_online?: boolean | null
           joined_at?: string
           last_seen?: string
           participant_id: string
@@ -64,7 +121,9 @@ export type Database = {
           session_id: string
         }
         Update: {
+          device_id?: string | null
           id?: string
+          is_online?: boolean | null
           joined_at?: string
           last_seen?: string
           participant_id?: string
@@ -102,6 +161,33 @@ export type Database = {
           participant_count?: number
           status?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      anonymous_user_preferences: {
+        Row: {
+          avatar_color: string | null
+          created_at: string
+          device_id: string
+          display_name: string | null
+          id: string
+          last_active: string
+        }
+        Insert: {
+          avatar_color?: string | null
+          created_at?: string
+          device_id: string
+          display_name?: string | null
+          id?: string
+          last_active?: string
+        }
+        Update: {
+          avatar_color?: string | null
+          created_at?: string
+          device_id?: string
+          display_name?: string | null
+          id?: string
+          last_active?: string
         }
         Relationships: []
       }
