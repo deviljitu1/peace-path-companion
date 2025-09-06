@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { MessageCircle, Users, Send, Loader2, LogOut, Smile, Paperclip, Image, FileText, Video, Wifi, WifiOff, History } from "lucide-react";
+import { MessageCircle, Users, Send, Loader2, LogOut, Smile, Paperclip, Image, FileText, Video, Wifi, WifiOff, History, Heart } from "lucide-react";
 import { toast } from "sonner";
 import EmojiPicker from 'emoji-picker-react';
 
@@ -652,74 +652,101 @@ export default function AnonymousChat() {
 
   const getAvatarColor = (name: string) => {
     const colors = [
-      'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500',
-      'bg-yellow-500', 'bg-indigo-500', 'bg-red-500', 'bg-teal-500'
+      'hsl(184 91% 35%)', 'hsl(213 94% 68%)', 'hsl(15 86% 65%)', 'hsl(35 77% 65%)',
+      'hsl(270 95% 75%)', 'hsl(142 76% 36%)', 'hsl(346 87% 43%)', 'hsl(45 93% 47%)'
     ];
     const index = name.length % colors.length;
     return colors[index];
   };
 
   const renderSidebar = () => (
-    <div className="w-16 bg-[#2f3136] flex flex-col items-center py-4 space-y-4">
-      <div className="w-12 h-12 bg-[#5865f2] rounded-2xl flex items-center justify-center hover:rounded-xl transition-all cursor-pointer">
-        <MessageCircle className="w-6 h-6 text-white" />
-      </div>
-      <div className="w-8 h-0.5 bg-gray-600 rounded" />
+    <div className="w-16 lg:w-20 bg-gradient-to-b from-primary/90 to-primary flex flex-col items-center py-4 space-y-4 shadow-gentle">
       <div 
-        className={`w-12 h-12 ${activePanel === 'people' ? 'bg-[#5865f2]' : 'bg-[#36393f]'} rounded-2xl hover:rounded-xl transition-all cursor-pointer flex items-center justify-center`}
+        className="w-10 h-10 lg:w-12 lg:h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center hover:rounded-xl hover:bg-white/30 transition-all cursor-pointer shadow-card"
+        onClick={() => window.location.href = '/'}
+      >
+        <MessageCircle className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
+      </div>
+      <div className="w-8 h-0.5 bg-white/30 rounded" />
+      <div 
+        className={`w-10 h-10 lg:w-12 lg:h-12 ${activePanel === 'people' ? 'bg-white/30 shadow-glow' : 'bg-white/10 hover:bg-white/20'} backdrop-blur-sm rounded-2xl hover:rounded-xl transition-all cursor-pointer flex items-center justify-center`}
         onClick={() => setActivePanel('people')}
       >
-        <Users className="w-6 h-6 text-white" />
+        <Users className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
       </div>
       <div 
-        className={`w-12 h-12 ${activePanel === 'groups' ? 'bg-[#5865f2]' : 'bg-[#36393f]'} rounded-2xl hover:rounded-xl transition-all cursor-pointer flex items-center justify-center`}
+        className={`w-10 h-10 lg:w-12 lg:h-12 ${activePanel === 'groups' ? 'bg-white/30 shadow-glow' : 'bg-white/10 hover:bg-white/20'} backdrop-blur-sm rounded-2xl hover:rounded-xl transition-all cursor-pointer flex items-center justify-center`}
         onClick={() => setActivePanel('groups')}
       >
-        <MessageCircle className="w-6 h-6 text-white" />
+        <MessageCircle className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
       </div>
     </div>
   );
 
   const renderContactsList = () => (
-    <div className="w-80 bg-[#36393f] flex flex-col">
-      <div className="p-4 border-b border-gray-700">
+    <div className="w-full md:w-80 lg:w-96 bg-white/95 backdrop-blur-sm flex flex-col border-r border-border/20">
+      <div className="p-3 lg:p-4 border-b border-border/20 bg-gradient-peaceful">
         <div className="relative">
           <Input
-            placeholder="Search"
+            placeholder="Search conversations..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="bg-[#202225] border-none text-gray-300 placeholder-gray-500 h-8 text-sm"
+            className="bg-white/80 border-border/30 text-foreground placeholder-muted-foreground h-9 lg:h-10 text-sm focus:ring-primary/30 focus:border-primary"
           />
         </div>
       </div>
       
       <ScrollArea className="flex-1">
         {activePanel === 'groups' && (
-          <div className="p-4">
-            <h3 className="text-gray-400 font-semibold text-xs uppercase tracking-wide mb-3">Groups</h3>
-            <div className="space-y-1">
-              <div className="flex items-center gap-3 p-2 rounded hover:bg-[#42454a] cursor-pointer">
-                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                  <MessageCircle className="w-4 h-4 text-white" />
+          <div className="p-3 lg:p-4">
+            <h3 className="text-muted-foreground font-semibold text-xs uppercase tracking-wide mb-3">Anonymous Rooms</h3>
+            <div className="space-y-2">
+              <div 
+                className="flex items-center gap-3 p-3 rounded-xl hover:bg-accent/50 cursor-pointer transition-all group border border-border/20 bg-white/50"
+                onClick={findOrCreateRoom}
+              >
+                <div className="w-10 h-10 bg-gradient-calm rounded-full flex items-center justify-center shadow-card group-hover:shadow-glow transition-all">
+                  <MessageCircle className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1">
-                  <div className="text-white text-sm font-medium">Anonymous Rooms</div>
-                  <div className="text-gray-400 text-xs">Find random chats</div>
+                  <div className="text-foreground text-sm font-medium">Random Chat</div>
+                  <div className="text-muted-foreground text-xs">Connect with someone new</div>
                 </div>
-                <div className="w-2 h-2 bg-orange-500 rounded-full" />
+                {isSearching && <Loader2 className="w-4 h-4 text-primary animate-spin" />}
+              </div>
+              
+              <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-accent/50 cursor-pointer transition-all group border border-border/20 bg-white/50">
+                <div className="w-10 h-10 bg-gradient-warm rounded-full flex items-center justify-center shadow-card">
+                  <Users className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <div className="text-foreground text-sm font-medium">Support Groups</div>
+                  <div className="text-muted-foreground text-xs">Join themed discussions</div>
+                </div>
+                <div className="w-2 h-2 bg-accent-foreground rounded-full" />
+              </div>
+
+              <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-accent/50 cursor-pointer transition-all group border border-border/20 bg-white/50">
+                <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center shadow-card">
+                  <Heart className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <div className="text-foreground text-sm font-medium">Peer Support</div>
+                  <div className="text-muted-foreground text-xs">Help each other grow</div>
+                </div>
               </div>
             </div>
           </div>
         )}
         
         {activePanel === 'people' && (
-          <div className="p-4">
+          <div className="p-3 lg:p-4">
             <div className="mb-6">
               {!currentRoom ? (
                 <Button 
                   onClick={findOrCreateRoom}
                   disabled={isSearching}
-                  className="w-full bg-[#5865f2] hover:bg-[#4752c4] text-white h-8 text-sm"
+                  className="w-full bg-gradient-calm hover:shadow-glow text-white h-10 text-sm transition-all"
                 >
                   {isSearching ? (
                     <>
@@ -727,70 +754,91 @@ export default function AnonymousChat() {
                       Searching...
                     </>
                   ) : (
-                    'Find Random Chat'
+                    <>
+                      <MessageCircle className="w-4 h-4 mr-2" />
+                      Find Random Chat
+                    </>
                   )}
                 </Button>
               ) : (
-                <div className="text-center">
-                  <div className="text-green-400 text-xs font-medium">Connected</div>
+                <div className="text-center p-3 bg-gradient-peaceful rounded-lg border border-border/20">
+                  <div className="text-primary text-sm font-medium">Connected to Chat</div>
+                  <div className="text-muted-foreground text-xs">Having a great conversation!</div>
                 </div>
               )}
             </div>
 
-            <h3 className="text-gray-400 font-semibold text-xs uppercase tracking-wide mb-3">People</h3>
-            <div className="space-y-1">
+            <h3 className="text-muted-foreground font-semibold text-xs uppercase tracking-wide mb-3">Active & Recent</h3>
+            <div className="space-y-2">
               {participantId && (
-                <div className="flex items-center gap-3 p-2 rounded">
-                  <div className={`w-8 h-8 ${getAvatarColor(participantId)} rounded-full flex items-center justify-center text-white text-xs font-semibold`}>
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-peaceful border border-border/20">
+                  <div 
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-semibold shadow-card"
+                    style={{ backgroundColor: getAvatarColor(participantId) }}
+                  >
                     {participantId.slice(0, 2).toUpperCase()}
                   </div>
                   <div className="flex-1">
-                    <div className="text-white text-sm font-medium">{participantId}</div>
-                    <div className="text-gray-400 text-xs">You</div>
+                    <div className="text-foreground text-sm font-medium">{participantId}</div>
+                    <div className="text-muted-foreground text-xs">You • Online</div>
                   </div>
-                  <div className="w-2 h-2 bg-green-500 rounded-full" />
+                  <div className="w-2 h-2 bg-green-500 rounded-full shadow-sm" />
                 </div>
               )}
               
               {otherParticipant && (
-                <div className="flex items-center gap-3 p-2 rounded hover:bg-[#42454a] cursor-pointer">
-                  <div className={`w-8 h-8 ${getAvatarColor(otherParticipant)} rounded-full flex items-center justify-center text-white text-xs font-semibold`}>
+                <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-accent/50 cursor-pointer transition-all group border border-border/20 bg-white/50">
+                  <div 
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-semibold shadow-card"
+                    style={{ backgroundColor: getAvatarColor(otherParticipant) }}
+                  >
                     {otherParticipant.slice(0, 2).toUpperCase()}
                   </div>
                   <div className="flex-1">
-                    <div className="text-white text-sm font-medium">{otherParticipant}</div>
-                    <div className="text-gray-400 text-xs">
-                      {otherParticipantOnline ? 'Online' : 'Last seen, 2.02pm'}
+                    <div className="text-foreground text-sm font-medium">{otherParticipant}</div>
+                    <div className="text-muted-foreground text-xs">
+                      {otherParticipantOnline ? 'Online now' : 'Last seen 2:02pm'}
                     </div>
                   </div>
-                  <div className={`w-2 h-2 ${otherParticipantOnline ? 'bg-green-500' : 'bg-gray-500'} rounded-full`} />
+                  <div className={`w-2 h-2 ${otherParticipantOnline ? 'bg-green-500' : 'bg-gray-400'} rounded-full shadow-sm`} />
                 </div>
               )}
 
-              {chatHistory.length > 0 && (
+              {!currentRoom && chatHistory.length > 0 && (
                 <>
                   <div className="pt-4 pb-2">
-                    <h4 className="text-gray-400 font-semibold text-xs uppercase tracking-wide">Recent Chats</h4>
+                    <h4 className="text-muted-foreground font-semibold text-xs uppercase tracking-wide">Previous Chats</h4>
                   </div>
-                  {chatHistory.slice(0, 3).map((connection) => (
+                  {chatHistory.slice(0, 5).map((connection, index) => (
                     <div
                       key={connection.id}
-                      className="flex items-center gap-3 p-2 rounded hover:bg-[#42454a] cursor-pointer"
+                      className="flex items-center gap-3 p-3 rounded-xl hover:bg-accent/50 cursor-pointer transition-all group border border-border/20 bg-white/50 hover:shadow-card"
                       onClick={() => reconnectToChat(connection)}
                     >
-                      <div className="w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center text-white text-xs font-semibold">
+                      <div 
+                        className="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-semibold shadow-card"
+                        style={{ backgroundColor: getAvatarColor(`Chat${index}`) }}
+                      >
                         PC
                       </div>
                       <div className="flex-1">
-                        <div className="text-white text-sm font-medium">Previous Chat</div>
-                        <div className="text-gray-400 text-xs">
-                          {formatTime(connection.last_connected)}
+                        <div className="text-foreground text-sm font-medium">Previous Chat #{connection.connection_count}</div>
+                        <div className="text-muted-foreground text-xs">
+                          {formatTime(connection.last_connected)} • {connection.connection_count} connections
                         </div>
                       </div>
-                      <div className="w-2 h-2 bg-gray-500 rounded-full" />
+                      <div className="w-2 h-2 bg-gray-400 rounded-full shadow-sm" />
                     </div>
                   ))}
                 </>
+              )}
+
+              {chatHistory.length === 0 && !currentRoom && !otherParticipant && (
+                <div className="text-center py-8">
+                  <Users className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
+                  <p className="text-muted-foreground text-sm">No conversations yet</p>
+                  <p className="text-muted-foreground text-xs">Start your first chat above</p>
+                </div>
               )}
             </div>
           </div>
@@ -802,40 +850,63 @@ export default function AnonymousChat() {
   const renderChatArea = () => {
     if (!currentRoom) {
       return (
-        <div className="flex-1 bg-[#40444b] flex items-center justify-center">
-          <div className="text-center space-y-4">
-            <MessageCircle className="w-16 h-16 text-gray-500 mx-auto" />
-            <div>
-              <h3 className="text-white text-xl font-semibold">Welcome to Anonymous Chat</h3>
-              <p className="text-gray-400 mt-2">Find someone to chat with from the sidebar</p>
+        <div className="flex-1 bg-gradient-peaceful flex items-center justify-center p-4">
+          <div className="text-center space-y-6 max-w-md">
+            <div className="w-20 h-20 bg-gradient-calm rounded-full flex items-center justify-center mx-auto shadow-glow">
+              <MessageCircle className="w-10 h-10 text-white" />
             </div>
+            <div>
+              <h3 className="text-foreground text-xl lg:text-2xl font-bold mb-2">Welcome to Anonymous Chat</h3>
+              <p className="text-muted-foreground">Connect with someone from the sidebar to start a meaningful conversation</p>
+            </div>
+            <Button 
+              onClick={findOrCreateRoom}
+              disabled={isSearching}
+              className="bg-gradient-calm hover:shadow-glow text-white transition-all"
+            >
+              {isSearching ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Finding someone...
+                </>
+              ) : (
+                <>
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  Start Random Chat
+                </>
+              )}
+            </Button>
           </div>
         </div>
       );
     }
 
     return (
-      <div className="flex-1 bg-[#40444b] flex flex-col">
+      <div className="flex-1 bg-gradient-peaceful flex flex-col">
         {/* Chat Header */}
-        <div className="h-16 bg-[#40444b] border-b border-gray-700 flex items-center px-4 justify-between">
+        <div className="h-16 bg-white/80 backdrop-blur-sm border-b border-border/20 flex items-center px-4 justify-between shadow-card">
           <div className="flex items-center gap-3">
-            <div className={`w-8 h-8 ${getAvatarColor(otherParticipant || 'Anonymous')} rounded-full flex items-center justify-center text-white text-xs font-semibold`}>
+            <div 
+              className="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-semibold shadow-card"
+              style={{ backgroundColor: getAvatarColor(otherParticipant || 'Anonymous') }}
+            >
               {(otherParticipant || 'A').slice(0, 2).toUpperCase()}
             </div>
             <div>
-              <div className="text-white font-semibold">{otherParticipant || 'Anonymous User'}</div>
-              <div className="text-gray-400 text-xs">
-                {otherParticipantOnline ? 'Online' : 'Last seen, 2.02pm'}
+              <div className="text-foreground font-semibold text-sm lg:text-base">{otherParticipant || 'Anonymous User'}</div>
+              <div className="text-muted-foreground text-xs flex items-center gap-1">
+                <div className={`w-2 h-2 ${otherParticipantOnline ? 'bg-green-500' : 'bg-gray-400'} rounded-full`} />
+                {otherParticipantOnline ? 'Online now' : 'Last seen 2:02pm'}
               </div>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white h-8 w-8 p-0">
+            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary h-8 w-8 p-0 hidden md:flex">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21L6.8 10.9a11.952 11.952 0 005.3 5.3l1.513-3.424a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
             </Button>
-            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white h-8 w-8 p-0">
+            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary h-8 w-8 p-0 hidden md:flex">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
               </svg>
@@ -844,7 +915,7 @@ export default function AnonymousChat() {
               variant="ghost"
               size="sm"
               onClick={leaveChat}
-              className="text-gray-400 hover:text-red-400 h-8 w-8 p-0"
+              className="text-muted-foreground hover:text-destructive h-8 w-8 p-0"
             >
               <LogOut className="w-4 h-4" />
             </Button>
@@ -855,23 +926,32 @@ export default function AnonymousChat() {
         <ScrollArea className="flex-1 px-4">
           <div className="py-4 space-y-4">
             {messages.length === 0 ? (
-              <div className="text-center text-gray-500 py-8">
-                {isConnected ? "Start the conversation!" : "Waiting for someone to join..."}
+              <div className="text-center text-muted-foreground py-12">
+                <MessageCircle className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                <p className="text-base font-medium mb-1">
+                  {isConnected ? "Start the conversation!" : "Waiting for someone to join..."}
+                </p>
+                <p className="text-sm">
+                  {isConnected ? "Say hello and break the ice" : "Finding you a chat partner..."}
+                </p>
               </div>
             ) : (
               messages.map((message) => {
                 const isOwn = message.participant_id === participantId;
                 return (
                   <div key={message.id} className="flex items-start gap-3">
-                    <div className={`w-8 h-8 ${getAvatarColor(message.participant_id)} rounded-full flex items-center justify-center text-white text-xs font-semibold flex-shrink-0`}>
+                    <div 
+                      className="w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-white text-xs font-semibold flex-shrink-0 shadow-card"
+                      style={{ backgroundColor: getAvatarColor(message.participant_id) }}
+                    >
                       {message.participant_id.slice(0, 2).toUpperCase()}
                     </div>
-                    <div className="flex-1 max-w-[70%]">
+                    <div className="flex-1 max-w-[85%]">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-white font-semibold text-sm">{message.participant_id}</span>
-                        <span className="text-gray-400 text-xs">{formatTime(message.created_at)}</span>
+                        <span className="text-foreground font-semibold text-sm">{message.participant_id}</span>
+                        <span className="text-muted-foreground text-xs">{formatTime(message.created_at)}</span>
                       </div>
-                      <div className={`rounded-lg px-3 py-2 ${isOwn ? 'bg-[#5865f2] text-white ml-auto' : 'bg-[#2f3136] text-gray-100'}`}>
+                      <div className={`rounded-2xl px-4 py-2 ${isOwn ? 'bg-gradient-calm text-white shadow-card ml-auto max-w-fit' : 'bg-white/80 backdrop-blur-sm text-foreground border border-border/20'}`}>
                         {message.message_type === 'text' ? (
                           <div className="text-sm break-words">{message.message}</div>
                         ) : (
@@ -892,22 +972,22 @@ export default function AnonymousChat() {
         </ScrollArea>
 
         {/* Message Input */}
-        <div className="p-4">
-          <div className="bg-[#40444b] rounded-lg relative">
+        <div className="p-3 lg:p-4 bg-white/80 backdrop-blur-sm border-t border-border/20">
+          <div className="bg-white/90 rounded-2xl relative shadow-card border border-border/30">
             <Input
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder={isConnected ? "Type your message here..." : "Waiting for connection..."}
               disabled={!isConnected}
-              className="bg-transparent border-none text-gray-100 placeholder-gray-500 pr-20 focus:ring-0 focus:outline-none h-11"
+              className="bg-transparent border-none text-foreground placeholder-muted-foreground pr-20 focus:ring-0 focus:outline-none h-12 rounded-2xl"
             />
             <div className="absolute right-3 top-1/2 -translate-y-1/2 flex gap-2">
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="h-6 w-6 p-0 text-gray-400 hover:text-white"
+                className="h-8 w-8 p-0 text-muted-foreground hover:text-primary hover:bg-primary/10"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={!isConnected}
               >
@@ -917,7 +997,7 @@ export default function AnonymousChat() {
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="h-6 w-6 p-0 text-gray-400 hover:text-white"
+                className="h-8 w-8 p-0 text-muted-foreground hover:text-primary hover:bg-primary/10"
                 onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                 disabled={!isConnected}
               >
@@ -925,15 +1005,12 @@ export default function AnonymousChat() {
               </Button>
               <Button
                 type="button"
-                variant="ghost"
                 size="sm"
-                className="h-6 w-6 p-0 text-[#5865f2] hover:text-[#4752c4]"
+                className="h-8 w-8 p-0 bg-gradient-calm hover:shadow-glow text-white"
                 onClick={() => sendMessage()}
                 disabled={!newMessage.trim() || !isConnected}
               >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-                </svg>
+                <Send className="w-4 h-4" />
               </Button>
             </div>
             {showEmojiPicker && (
@@ -959,10 +1036,30 @@ export default function AnonymousChat() {
   };
 
   return (
-    <div className="h-screen bg-[#2f3136] flex overflow-hidden">
+    <div className="h-screen bg-gradient-peaceful flex overflow-hidden">
       {renderSidebar()}
-      {renderContactsList()}
-      {renderChatArea()}
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+        <div className={`${currentRoom ? 'hidden md:block' : 'block'}`}>
+          {renderContactsList()}
+        </div>
+        <div className={`${currentRoom ? 'block' : 'hidden md:block'} flex-1`}>
+          {renderChatArea()}
+        </div>
+      </div>
+      {/* Mobile back button when in chat */}
+      {currentRoom && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setCurrentRoom(null)}
+          className="md:hidden fixed top-4 left-4 z-50 bg-white/80 backdrop-blur-sm shadow-card"
+        >
+          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Back
+        </Button>
+      )}
     </div>
   );
 }
