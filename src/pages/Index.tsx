@@ -142,7 +142,7 @@ const Index = () => {
               <div className="p-3 bg-gradient-calm rounded-full w-fit mb-4 group-hover:shadow-glow transition-all duration-300">
                 <MessageCircle className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
-              <h3 className="text-lg md:text-xl font-semibold mb-3 group-hover:text-primary transition-colors">24/7 AI Support</h3>
+              <h3 className="text-lg md:text-xl font-semibold mb-3 group-hover:text-primary transition-colors" >24/7 AI Support</h3>
               <p className="text-sm md:text-base text-muted-foreground group-hover:text-foreground transition-colors">
                 Chat with CalmMind anytime. Get empathetic responses, coping strategies, and gentle guidance whenever you need it.
               </p>
