@@ -6,7 +6,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
+const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
 
 // Therapeutic approaches and techniques
 const THERAPEUTIC_TECHNIQUES = {
@@ -130,8 +130,8 @@ serve(async (req) => {
       });
     }
 
-    if (!GEMINI_API_KEY) {
-      console.error('GEMINI_API_KEY is not set');
+    if (!LOVABLE_API_KEY) {
+      console.error('LOVABLE_API_KEY is not set');
       return new Response(JSON.stringify({ error: 'AI service not configured' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -142,83 +142,71 @@ serve(async (req) => {
     let moodContext = "";
     if (userMood && MOOD_RESPONSES[userMood]) {
       const moodInfo = MOOD_RESPONSES[userMood];
-      moodContext = `USER'S CURRENT MOOD LEVEL: ${userMood}/5 (${['Very Sad', 'Sad', 'Neutral', 'Good', 'Very Good'][userMood-1]})
+      moodContext = `\n\nUSER'S CURRENT MOOD LEVEL: ${userMood}/5 (${['Very Sad', 'Sad', 'Neutral', 'Good', 'Very Good'][userMood-1]})
 RECOMMENDED APPROACH: ${moodInfo.approach}
 SUGGESTED TECHNIQUES: ${moodInfo.techniques.join(', ')}`;
     }
 
-    // Prepare conversation history for Gemini
-    const contents = [
+    // Build messages array for Lovable AI Gateway (OpenAI-compatible format)
+    const messages = [
       {
-        role: "user",
-        parts: [{ text: `${SYSTEM_PROMPT}\n\n${moodContext}` }]
+        role: "system",
+        content: SYSTEM_PROMPT + moodContext
       }
     ];
 
     // Add chat history
     chatHistory.forEach((msg: any) => {
-      contents.push({
-        role: msg.isUser ? "user" : "model",
-        parts: [{ text: msg.content }]
+      messages.push({
+        role: msg.isUser ? "user" : "assistant",
+        content: msg.content
       });
     });
 
     // Add current message
-    contents.push({
+    messages.push({
       role: "user",
-      parts: [{ text: message }]
+      content: message
     });
 
-    console.log('Calling Gemini API with enhanced therapeutic approach');
+    console.log('Calling Lovable AI Gateway with Gemini model');
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        contents: contents,
-        generationConfig: {
-          temperature: 0.8,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 2048, // Increased for more comprehensive responses
-        },
-        safetySettings: [
-          {
-            category: "HARM_CATEGORY_HARASSMENT",
-            threshold: "BLOCK_ONLY_HIGH"
-          },
-          {
-            category: "HARM_CATEGORY_HATE_SPEECH",
-            threshold: "BLOCK_ONLY_HIGH"
-          },
-          {
-            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-            threshold: "BLOCK_ONLY_HIGH"
-          },
-          {
-            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-            threshold: "BLOCK_ONLY_HIGH"
-          }
-        ]
+        model: 'google/gemini-2.5-flash',
+        messages: messages,
+        temperature: 0.8,
+        max_tokens: 2048,
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Gemini API error:', response.status, errorText);
-      throw new Error(`Gemini API error: ${response.status}`);
+      console.error('Lovable AI Gateway error:', response.status, errorText);
+      
+      if (response.status === 429) {
+        throw new Error('Rate limit exceeded. Please try again in a moment.');
+      }
+      if (response.status === 402) {
+        throw new Error('AI credits depleted. Please add credits to continue.');
+      }
+      
+      throw new Error(`AI Gateway error: ${response.status}`);
     }
 
     const data = await response.json();
     
-    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-      console.error('Unexpected Gemini response structure:', data);
-      throw new Error('Invalid response from Gemini API');
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error('Unexpected AI Gateway response structure:', data);
+      throw new Error('Invalid response from AI Gateway');
     }
 
-    const aiResponse = data.candidates[0].content.parts[0].text;
+    const aiResponse = data.choices[0].message.content;
 
     // Enhanced crisis detection with severity levels
     let crisisLevel = 'NONE';
@@ -294,7 +282,7 @@ Would you like to try again in a moment? In the meantime, try taking three deep 
     return new Response(JSON.stringify({ 
       response: fallbackResponse,
       crisisDetected: true, // Assume crisis when systems are down
-      error: 'AI service temporarily unavailable' 
+      error: error instanceof Error ? error.message : 'AI service temporarily unavailable'
     }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
